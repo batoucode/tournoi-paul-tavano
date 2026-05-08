@@ -363,15 +363,17 @@ const ALL_TEAMS = {
 
 // ── BRACKET DEFINITION ──
 const QF_MATCHES = [
-  { id:'14', label:'1er 1/4 F', t1:'ADA Blois', c1:'blois', t2:'CRA Basket', c2:'other', sf:'sf1' },
+  // sf1 = match 17 (Tours MB vs TNT1)
   { id:'13', label:'3ème 1/4 F', t1:'Tours MB', c1:'tmb', t2:'CES Tours', c2:'ces', sf:'sf1' },
-  { id:'16', label:'2ème 1/4 F', t1:'TNT1', c1:'tnt', t2:'Montrichard', c2:'montrichard', sf:'sf2' },
+  { id:'16', label:'2ème 1/4 F', t1:'TNT1', c1:'tnt', t2:'Montrichard', c2:'montrichard', sf:'sf1' },
+  // sf2 = match 18 (ADA Blois vs TNT2)
+  { id:'14', label:'1er 1/4 F', t1:'ADA Blois', c1:'blois', t2:'CRA Basket', c2:'other', sf:'sf2' },
   { id:'15', label:'4ème 1/4 F', t1:'TNT2', c1:'tnt', t2:'Azay Cheillé', c2:'azay', sf:'sf2' },
 ];
 
 const SF_CONFIG = [
   { id:'17', label:'1ère 1/2 F', sf:'sf1', tag:'sf', terrain:'Salle Paul Tavano · 15:15',
-    t1:'TNT1', c1:'tnt', t2:'Tours MB', c2:'tmb' },
+    t1:'Tours MB', c1:'tmb', t2:'TNT1', c2:'tnt' },
   { id:'18', label:'2ème 1/2 F', sf:'sf2', tag:'sf', terrain:'Salle Paul Tavano · 15:45',
     t1:'ADA Blois', c1:'blois', t2:'TNT2', c2:'tnt' },
 ];
