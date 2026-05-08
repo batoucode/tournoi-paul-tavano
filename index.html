@@ -265,6 +265,63 @@
   </div>
 </div>
 
+<!-- ── TABLEAU ÉLIMINATOIRE ── -->
+<style>
+.bracket { max-width:680px; margin:18px auto 5px; padding:0 12px; }
+.bracket-round { margin-bottom:14px; }
+.bracket-title { font-family:'Syne',sans-serif; font-size:.65rem; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); margin-bottom:8px; padding-left:2px; }
+.bracket-title.elim-q { color:#a78bfa; }
+.bracket-title.elim-sf { color:#60a5fa; }
+.bracket-title.elim-f { color:var(--tnt); }
+
+.bracket-card { background:var(--surface); border-radius:10px; border:1px solid var(--border); padding:10px 12px; margin-bottom:6px; transition:border-color .2s; }
+.bracket-card.done { border-color:rgba(34,197,94,.3); }
+.bracket-card.won { border-color:rgba(249,115,22,.4); box-shadow:0 0 8px rgba(249,115,22,.15); }
+
+.bracket-meta { display:flex; justify-content:space-between; align-items:center; margin-bottom:5px; }
+.bracket-tag { font-size:.57rem; font-weight:600; letter-spacing:.06em; text-transform:uppercase; padding:2px 7px; border-radius:5px; background:rgba(124,58,237,.15); color:#a78bfa; }
+.bracket-tag.sf { background:rgba(96,165,250,.15); color:#60a5fa; }
+.bracket-tag.fin { background:rgba(249,115,22,.18); color:var(--tnt); }
+.bracket-lieu { font-size:.6rem; color:var(--muted); }
+
+.bracket-teams { display:flex; flex-direction:column; gap:3px; }
+.bracket-team { display:flex; align-items:center; gap:8px; padding:5px 8px; border-radius:7px; font-size:.82rem; font-weight:500; transition:all .2s; }
+.bracket-team .name { flex:1; }
+.bracket-team .scr { font-family:'JetBrains Mono',monospace; font-size:.85rem; font-weight:600; min-width:24px; text-align:center; }
+.bracket-team.winner { background:rgba(249,115,22,.1); border:1px solid rgba(249,115,22,.25); }
+.bracket-team.loser { opacity:.5; }
+.bracket-team.tnt   .scr { color:var(--tnt); }
+.bracket-team.tmb   .scr { color:var(--tmb); }
+.bracket-team.blois .scr { color:#22c55e; }
+.bracket-team.montrichard .scr { color:var(--montrichard); }
+.bracket-team.ces .scr { color:#fca5a5; }
+.bracket-team.azay .scr { color:#86efac; }
+.bracket-team.other .scr { color:var(--muted); }
+.bracket-team .adv { font-size:.65rem; color:#22c55e; font-weight:700; margin-left:auto; }
+
+.bracket-arrow { text-align:center; padding:2px 0 8px; font-size:.7rem; color:var(--muted); }
+.bracket-arrow span { display:inline-block; background:var(--surface); padding:2px 10px; border-radius:10px; border:1px solid var(--border); }
+
+.bracket-empty { text-align:center; padding:20px; color:var(--muted); font-size:.78rem; }
+.bracket-empty .eicon { font-size:1.5rem; display:block; margin-bottom:5px; }
+</style>
+
+<div class="section-wrap" style="margin-top:18px" id="bracketSection"><div class="section-label elim">🏆 Tableau éliminatoire</div></div>
+<div class="bracket" id="bracketContainer">
+  <div class="bracket-round" id="bracketQF">
+    <div class="bracket-title elim-q">⚡ Quarts de finale</div>
+    <div id="bracketQFInner"></div>
+  </div>
+  <div class="bracket-round" id="bracketSF">
+    <div class="bracket-title elim-sf">🔥 Demi-finales</div>
+    <div id="bracketSFInner"></div>
+  </div>
+  <div class="bracket-round" id="bracketFinal">
+    <div class="bracket-title elim-f">🏆 Finale & 3ᵉ place</div>
+    <div id="bracketFinalInner"></div>
+  </div>
+</div>
+
 <!-- ── ÉLIMINATIONS ── -->
 <div class="section-wrap" style="margin-top:18px" id="eliminations"><div class="section-label elim">⚡ Phase éliminatoire — Sélection des équipes</div></div>
 <div class="elim-sel-wrap" id="elimContainer"></div>
@@ -314,6 +371,7 @@ async function loadScores() {
   }
   MATCHES.forEach(m => renderDisp(m.id, m.c1, m.c2));
   renderStandings();
+  renderBracket();
   renderElimSelectors();
 }
 loadingPromise = loadScores();
@@ -331,6 +389,7 @@ async function persist(id) {
       })
     });
     renderStandings();
+    renderBracket();
   } catch(e) {
     console.warn('Erreur sauvegarde:', e);
   }
@@ -601,7 +660,224 @@ function getAllTeams() {
   Object.keys(POULE_B_TEAMS).forEach(n => { all[n] = POULE_B_TEAMS[n]; });
   return all;
 }
+// ── TABLEAU ÉLIMINATOIRE ──
+const BRACKET_QF = [
+  {id:'14', label:'1er 1/4 F', t1:'ADA Blois', t2:'CRA Basket', c1:'blois', c2:'other', goesTo:'sf1'},
+  {id:'13', label:'3ème 1/4 F', t1:'Tours MB', t2:'CES Tours', c1:'tmb', c2:'ces', goesTo:'sf1'},
+  {id:'16', label:'2ème 1/4 F', t1:'TNT1', t2:'Montrichard', c1:'tnt', c2:'montrichard', goesTo:'sf2'},
+  {id:'15', label:'4ème 1/4 F', t1:'TNT2', t2:'Azay Cheillé', c1:'tnt', c2:'azay', goesTo:'sf2'},
+];
+const BRACKET_SF = [
+  {id:'17', label:'1ère 1/2 F', sf:'sf1'},
+  {id:'18', label:'2ème 1/2 F', sf:'sf2'},
+];
 
+function getWinner(id) {
+  const s = scores[id];
+  if (!s || !s.s1 || !s.s2) return null;
+  const n1 = parseInt(s.s1), n2 = parseInt(s.s2);
+  if (isNaN(n1) || isNaN(n2)) return null;
+  const match = MATCHES.find(m => String(m.id) === String(id));
+  if (!match) return null;
+  return n1 > n2 ? match.t1 : match.t2;
+}
+
+function getScoreStr(id) {
+  const s = scores[id];
+  if (!s) return null;
+  return s.s1 && s.s2 ? `${s.s1}–${s.s2}` : null;
+}
+
+function getTeamColor(name) {
+  const m = MATCHES.find(x => x.t1 === name);
+  return m ? m.c1 : 'other';
+}
+
+function renderBracket() {
+  // Quarts
+  const qfInner = document.getElementById('bracketQFInner');
+  qfInner.innerHTML = BRACKET_QF.map(q => {
+    const s = scores[q.id];
+    const done = s && s.s1 && s.s2;
+    const n1 = done ? parseInt(s.s1) : null;
+    const n2 = done ? parseInt(s.s2) : null;
+    const w1 = done && n1 > n2;
+    const w2 = done && n2 > n1;
+    const scoreStr = done ? `${s.s1}–${s.s2}` : '–';
+    const winner = done ? (n1 > n2 ? q.t1 : q.t2) : null;
+    
+    return `
+      <div class="bracket-card ${done ? 'done' : ''} ${done ? 'won' : ''}">
+        <div class="bracket-meta">
+          <span class="bracket-tag">${q.label}</span>
+        </div>
+        <div class="bracket-teams">
+          <div class="bracket-team ${q.c1} ${w1 ? 'winner' : (!done ? '' : 'loser')}">
+            <span class="name">${q.t1}</span>
+            <span class="scr">${done ? s.s1 : '–'}</span>
+            ${w1 ? '<span class="adv">➜ qualifié</span>' : ''}
+          </div>
+          <div class="bracket-team ${q.c2} ${w2 ? 'winner' : (!done ? '' : 'loser')}">
+            <span class="name">${q.t2}</span>
+            <span class="scr">${done ? s.s2 : '–'}</span>
+            ${w2 ? '<span class="adv">➜ qualifié</span>' : ''}
+          </div>
+        </div>
+      </div>`;
+  }).join('');
+
+  // Demies
+  const sfInner = document.getElementById('bracketSFInner');
+  sfInner.innerHTML = BRACKET_SF.map(sf => {
+    const qfMatchIds = BRACKET_QF.filter(q => q.goesTo === sf.sf).map(q => q.id);
+    const winners = qfMatchIds.map(id => getWinner(id)).filter(w => w !== null);
+    const allPlayed = qfMatchIds.every(id => {
+      const s = scores[id];
+      return s && s.s1 && s.s2;
+    });
+    
+    const sfMatch = MATCHES.find(m => String(m.id) === String(sf.id));
+    const sfScore = scores[sf.id];
+    const sfDone = sfScore && sfScore.s1 && sfScore.s2;
+    const sn1 = sfDone ? parseInt(sfScore.s1) : null;
+    const sn2 = sfDone ? parseInt(sfScore.s2) : null;
+    const sw1 = sfDone && sn1 > sn2;
+    
+    const team1 = winners[0] || (allPlayed ? '—' : '?');
+    const team2 = winners[1] || (allPlayed ? '—' : '?');
+    const c1 = team1 !== '?' && team1 !== '—' ? getTeamColor(team1) : 'other';
+    const c2 = team2 !== '?' && team2 !== '—' ? getTeamColor(team2) : 'other';
+    
+    const scoreStr = sfDone ? `${sfScore.s1}–${sfScore.s2}` : '–';
+    
+    return `
+      ${allPlayed ? `<div class="bracket-arrow"><span>⬆ ${winners[0] || '?'} et ${winners[1] || '?'} s'affrontent</span></div>` : ''}
+      <div class="bracket-card ${allPlayed ? 'done' : ''} ${sfDone ? 'won' : ''}">
+        <div class="bracket-meta">
+          <span class="bracket-tag sf">${sf.label}</span>
+        </div>
+        <div class="bracket-teams">
+          <div class="bracket-team ${c1} ${sw1 ? 'winner' : (!sfDone ? '' : 'loser')}">
+            <span class="name">${team1}</span>
+            <span class="scr">${sfDone ? sfScore.s1 : '–'}</span>
+            ${sw1 ? '<span class="adv">➜ Finale</span>' : ''}
+          </div>
+          <div class="bracket-team ${c2} ${sfDone && !sw1 ? 'winner' : (!sfDone ? '' : 'loser')}">
+            <span class="name">${team2}</span>
+            <span class="scr">${sfDone ? sfScore.s2 : '–'}</span>
+            ${sfDone && !sw1 ? '<span class="adv">➜ Finale</span>' : ''}
+          </div>
+        </div>
+      </div>`;
+  }).join('');
+
+  // Finale + 3ème
+  const finalInner = document.getElementById('bracketFinalInner');
+  const sfWinners = BRACKET_SF.map(sf => {
+    const s = scores[sf.id];
+    if (!s || !s.s1 || !s.s2) return null;
+    const n1 = parseInt(s.s1), n2 = parseInt(s.s2);
+    if (isNaN(n1) || isNaN(n2)) return null;
+    const qfIds = BRACKET_QF.filter(q => q.goesTo === sf.sf).map(q => q.id);
+    const qWinners = qfIds.map(id => getWinner(id));
+    const sfMatch = MATCHES.find(m => String(m.id) === String(sf.id));
+    if (!sfMatch) return null;
+    return n1 > n2 ? qWinners[0] || sfMatch.t1 : qWinners[1] || sfMatch.t2;
+  }).filter(w => w !== null);
+
+  const sfLosers = BRACKET_SF.map(sf => {
+    const s = scores[sf.id];
+    if (!s || !s.s1 || !s.s2) return null;
+    const n1 = parseInt(s.s1), n2 = parseInt(s.s2);
+    if (isNaN(n1) || isNaN(n2)) return null;
+    const qfIds = BRACKET_QF.filter(q => q.goesTo === sf.sf).map(q => q.id);
+    const qWinners = qfIds.map(id => getWinner(id));
+    const sfMatch = MATCHES.find(m => String(m.id) === String(sf.id));
+    if (!sfMatch) return null;
+    return n1 > n2 ? qWinners[1] || sfMatch.t2 : qWinners[0] || sfMatch.t1;
+  }).filter(w => w !== null);
+
+  const allSfDone = BRACKET_SF.every(sf => {
+    const s = scores[sf.id];
+    return s && s.s1 && s.s2;
+  });
+  const someSfDone = BRACKET_SF.some(sf => {
+    const s = scores[sf.id];
+    return s && s.s1 && s.s2;
+  });
+
+  let finalHtml = '';
+  
+  // Finale
+  const fScore = scores['20'];
+  const fDone = fScore && fScore.s1 && fScore.s2;
+  const fn1 = fDone ? parseInt(fScore.s1) : null;
+  const fn2 = fDone ? parseInt(fScore.s2) : null;
+  const fw1 = fDone && fn1 > fn2;
+  
+  const fTeam1 = sfWinners[0] || (allSfDone ? '—' : '?');
+  const fTeam2 = sfWinners[1] || (allSfDone ? '—' : '?');
+  const fc1 = fTeam1 !== '?' && fTeam1 !== '—' ? getTeamColor(fTeam1) : 'other';
+  const fc2 = fTeam2 !== '?' && fTeam2 !== '—' ? getTeamColor(fTeam2) : 'other';
+  
+  finalHtml += `
+    <div class="bracket-card ${allSfDone ? 'done' : ''} ${fDone ? 'won' : ''}" style="border-color:${fDone ? 'rgba(249,115,22,.5)' : ''}">
+      <div class="bracket-meta">
+        <span class="bracket-tag fin" style="${fDone ? 'background:rgba(249,115,22,.25)' : ''}">${fDone ? '🏆' : ''} FINALE</span>
+      </div>
+      ${allSfDone ? `<div style="font-size:.65rem;color:var(--muted);margin-bottom:4px">⬆ ${fTeam1} vs ${fTeam2}</div>` : ''}
+      <div class="bracket-teams">
+        <div class="bracket-team ${fc1} ${fw1 ? 'winner' : (!fDone ? '' : 'loser')}">
+          <span class="name">${fTeam1}</span>
+          <span class="scr">${fDone ? fScore.s1 : '–'}</span>
+          ${fw1 ? '<span class="adv">🏆 CHAMPION</span>' : ''}
+        </div>
+        <div class="bracket-team ${fc2} ${fDone && !fw1 ? 'winner' : (!fDone ? '' : 'loser')}">
+          <span class="name">${fTeam2}</span>
+          <span class="scr">${fDone ? fScore.s2 : '–'}</span>
+          ${fDone && !fw1 ? '<span class="adv">🏆 CHAMPION</span>' : ''}
+        </div>
+      </div>
+    </div>`;
+
+  // 3ème place
+  const tScore = scores['19'];
+  const tDone = tScore && tScore.s1 && tScore.s2;
+  const tn1 = tDone ? parseInt(tScore.s1) : null;
+  const tn2 = tDone ? parseInt(tScore.s2) : null;
+  const tw1 = tDone && tn1 > tn2;
+  
+  const tTeam1 = sfLosers[0] || (someSfDone ? (sfLosers[0] || '—') : '?');
+  const tTeam2 = sfLosers[1] || (someSfDone ? (sfLosers[1] || '—') : '?');
+  const tc1 = tTeam1 !== '?' && tTeam1 !== '—' ? getTeamColor(tTeam1) : 'other';
+  const tc2 = tTeam2 !== '?' && tTeam2 !== '—' ? getTeamColor(tTeam2) : 'other';
+
+  finalHtml += `
+    <div style="margin-top:8px;">
+      <div class="bracket-card ${someSfDone ? 'done' : ''}">
+        <div class="bracket-meta">
+          <span class="bracket-tag">🥉 3ème place</span>
+        </div>
+        ${sfLosers.length >= 2 ? `<div style="font-size:.65rem;color:var(--muted);margin-bottom:4px">⬇ ${tTeam1} vs ${tTeam2}</div>` : ''}
+        <div class="bracket-teams">
+          <div class="bracket-team ${tc1} ${tw1 ? 'winner' : (!tDone ? '' : 'loser')}">
+            <span class="name">${tTeam1}</span>
+            <span class="scr">${tDone ? tScore.s1 : '–'}</span>
+            ${tw1 ? '<span class="adv">🥉 3ème</span>' : ''}
+          </div>
+          <div class="bracket-team ${tc2} ${tDone && !tw1 ? 'winner' : (!tDone ? '' : 'loser')}">
+            <span class="name">${tTeam2}</span>
+            <span class="scr">${tDone ? tScore.s2 : '–'}</span>
+            ${tDone && !tw1 ? '<span class="adv">🥉 3ème</span>' : ''}
+          </div>
+        </div>
+      </div>
+    </div>`;
+
+  finalInner.innerHTML = finalHtml;
+}
+
+// ── ÉLIMINATIONS ──
 function renderElimSelectors() {
   const container = document.getElementById('elimContainer');
   if (!container) return;
