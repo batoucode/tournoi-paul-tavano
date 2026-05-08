@@ -286,10 +286,10 @@ const MATCHES = [
   {id:'11', time:'13:35', terrain:'Salle Paul Tavano',   phase:'groupes', poule:'b', tag:'Poule B',          t1:'TNT2',              c1:'tnt',   t2:'Tours MB',          c2:'tmb', cardClass:'tnt',   teams:'tnt2 tours mb'},
   {id:'12', time:'13:55', terrain:'Salle Paul Tavano',   phase:'groupes', poule:'a', tag:'Poule A',          t1:'ADA Blois',         c1:'blois', t2:'CES Tours',            c2:'ces', cardClass:'blois', teams:'ada blois ces tours'},
   // élim
-  {id:'13', time:'14:15', terrain:'Salle Paul Tavano',   phase:'elim', poule:'', tag:'3ème 1/4 F',           t1:'1ère Poule B',       c1:'other', t2:'4ème Poule B',         c2:'other', cardClass:'elim', teams:'1ere poule b 4eme poule b'},
-  {id:'14', time:'14:15', terrain:'Aire Pierrot Vérité', phase:'elim', poule:'', tag:'1er 1/4 F',            t1:'1ère Poule A',       c1:'other', t2:'3ème Poule A',         c2:'other', cardClass:'elim', teams:'1ere poule a 3eme poule a'},
-  {id:'15', time:'14:35', terrain:'Salle Paul Tavano',   phase:'elim', poule:'', tag:'4ème 1/4 F',           t1:'2ème Poule B',       c1:'other', t2:'3ème Poule B',         c2:'other', cardClass:'elim', teams:'2eme poule b 3eme poule b'},
-  {id:'16', time:'14:35', terrain:'Aire Pierrot Vérité', phase:'elim', poule:'', tag:'2ème 1/4 F',           t1:'2ème Poule A',       c1:'other', t2:'Gagnant 4ème 1/4 F',  c2:'other', cardClass:'elim', teams:'2eme poule a gagnant 4eme'},
+  {id:'13', time:'14:15', terrain:'Petite salle',        phase:'elim', poule:'', tag:'3ème 1/4 F',           t1:'Tours MB',           c1:'tmb',   t2:'CES Tours',            c2:'ces', cardClass:'elim', teams:'tours mb ces tours'},
+  {id:'14', time:'14:20', terrain:'Salle Paul Tavano',   phase:'elim', poule:'', tag:'1er 1/4 F',            t1:'ADA Blois',          c1:'blois', t2:'CRA Basket',           c2:'other', cardClass:'elim', teams:'ada blois cra basket'},
+  {id:'15', time:'14:35', terrain:'Petite salle',        phase:'elim', poule:'', tag:'4ème 1/4 F',           t1:'TNT2',               c1:'tnt',   t2:'Azay Cheillé',         c2:'azay', cardClass:'elim', teams:'tnt2 azay cheille'},
+  {id:'16', time:'14:40', terrain:'Salle Paul Tavano',   phase:'elim', poule:'', tag:'2ème 1/4 F',           t1:'TNT1',               c1:'tnt',   t2:'Montrichard',          c2:'montrichard', cardClass:'elim', teams:'tnt1 montrichard'},
   {id:'17', time:'14:55', terrain:'Salle Paul Tavano',   phase:'elim', poule:'', tag:'1ère 1/2 F',           t1:'Gagnant 1er 1/4 F', c1:'other', t2:'Gagnant 3ème 1/4 F',  c2:'other', cardClass:'elim', teams:'gagnant 1er 3eme 1/4 f'},
   {id:'18', time:'14:55', terrain:'Aire Pierrot Vérité', phase:'elim', poule:'', tag:'2ème 1/2 F',           t1:'Gagnant 2ème 1/4 F',c1:'other', t2:'Gagnant 4ème 1/4 F',  c2:'other', cardClass:'elim', teams:'gagnant 2eme 4eme 1/4 f'},
   {id:'19', time:'15:25', terrain:'Aire Pierrot Vérité', phase:'elim', poule:'', tag:'Match 3ème place',     t1:'Perdant 1ère 1/2 F',c1:'other', t2:'Perdant 2ème 1/2 F',  c2:'other', cardClass:'elim', teams:'perdant 1ere 2eme 1/2 f'},
@@ -585,10 +585,10 @@ function renderStandings() {
 
 // ── ÉLIMINATIONS ──
 const ELIM_MATCHES = [
-  {id:'13', tag:'3ᵉ 1/4 F', terrain:'Salle Paul Tavano'},
-  {id:'14', tag:'1ᵉʳ 1/4 F', terrain:'Aire Pierrot Vérité'},
-  {id:'15', tag:'4ᵉ 1/4 F', terrain:'Salle Paul Tavano'},
-  {id:'16', tag:'2ᵉ 1/4 F', terrain:'Aire Pierrot Vérité'},
+  {id:'13', tag:'3ᵉ 1/4 F', terrain:'Petite salle · 14:15'},
+  {id:'14', tag:'1ᵉʳ 1/4 F', terrain:'Salle Paul Tavano · 14:20'},
+  {id:'15', tag:'4ᵉ 1/4 F', terrain:'Petite salle · 14:35'},
+  {id:'16', tag:'2ᵉ 1/4 F', terrain:'Salle Paul Tavano · 14:40'},
   {id:'17', tag:'1ʳᵉ 1/2 F', terrain:'Salle Paul Tavano'},
   {id:'18', tag:'2ᵉ 1/2 F', terrain:'Aire Pierrot Vérité'},
   {id:'19', tag:'🥉 3ᵉ place', terrain:'Aire Pierrot Vérité'},
