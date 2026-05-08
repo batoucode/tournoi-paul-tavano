@@ -1,0 +1,925 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Trophée Paul Tavano U13M — 8 mai 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0d16;
+    --surface: #111827;
+    --border: rgba(255,255,255,0.07);
+    --text: #e8eaf0;
+    --muted: #64748b;
+    --tnt: #F97316;
+    --tmb: #ef4444;
+    --blois: #22c55e;
+    --montrichard: #EAB308;
+    --ces: #dc2626;
+    --azay: #16a34a;
+    --accent: #7084FF;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; min-height: 100vh; padding: 0 0 60px; }
+
+  /* HERO */
+  .hero { background: linear-gradient(135deg,#0f172a 0%,#1a1040 60%,#0f172a 100%); padding: 28px 20px 22px; text-align: center; border-bottom: 1px solid var(--border); position: relative; overflow: hidden; }
+  .hero::before { content:''; position:absolute; inset:0; background:radial-gradient(ellipse at 50% 0%,rgba(112,132,255,.18) 0%,transparent 70%); pointer-events:none; }
+  .trophy-icon { font-size:2.2rem; margin-bottom:6px; display:block; filter:drop-shadow(0 0 12px rgba(249,115,22,.6)); }
+  .hero h1 { font-family:'Syne',sans-serif; font-size:clamp(1.2rem,5vw,1.8rem); font-weight:800; letter-spacing:-.02em; color:#fff; line-height:1.1; }
+  .hero h1 span { color:var(--tnt); }
+  .hero .date { font-family:'JetBrains Mono',monospace; font-size:.75rem; color:var(--accent); margin-top:5px; letter-spacing:.08em; }
+
+  /* LEGEND */
+  .legend { display:flex; flex-wrap:wrap; gap:7px; justify-content:center; padding:14px 20px 10px; }
+  .legend-item { display:flex; align-items:center; gap:5px; background:var(--surface); border-radius:20px; padding:4px 11px; font-size:.75rem; font-weight:600; border:1px solid var(--border); }
+  .dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
+  .dot-tnt   { background:var(--tnt);   box-shadow:0 0 6px rgba(249,115,22,.7); }
+  .dot-tmb   { background:var(--tmb);   box-shadow:0 0 6px rgba(239,68,68,.7); }
+  .dot-blois { background:var(--blois); box-shadow:0 0 6px rgba(34,197,94,.7); }
+  .dot-montrichard { background:var(--montrichard); box-shadow:0 0 6px rgba(234,179,8,.7); }
+  .dot-ces { background:linear-gradient(135deg,#dc2626,#fff); box-shadow:0 0 6px rgba(220,38,38,.7); }
+  .dot-azay { background:linear-gradient(135deg,#16a34a,#fff); box-shadow:0 0 6px rgba(22,163,74,.7); }
+  .dot-other { background:var(--muted); }
+
+  /* SEARCH */
+  .search-wrap { padding:0 14px 12px; max-width:680px; margin:0 auto; }
+  .search-box { position:relative; }
+  .search-box input { width:100%; background:var(--surface); border:1px solid var(--accent); border-radius:12px; padding:12px 16px 12px 42px; color:var(--text); font-family:'DM Sans',sans-serif; font-size:.92rem; outline:none; transition:box-shadow .2s; }
+  .search-box input::placeholder { color:var(--muted); }
+  .search-box input:focus { box-shadow:0 0 0 3px rgba(112,132,255,.25); }
+  .search-box .sicon { position:absolute; left:13px; top:50%; transform:translateY(-50%); font-size:1rem; color:var(--accent); pointer-events:none; }
+  .count-badge { text-align:right; font-size:.7rem; color:var(--muted); margin-top:5px; font-family:'JetBrains Mono',monospace; }
+
+  /* PILLS */
+  .filter-pills { display:flex; gap:7px; padding:0 14px 14px; overflow-x:auto; -webkit-overflow-scrolling:touch; scrollbar-width:none; max-width:680px; margin:0 auto; }
+  .filter-pills::-webkit-scrollbar { display:none; }
+  .pill { flex-shrink:0; padding:5px 13px; border-radius:20px; font-size:.76rem; font-weight:600; border:1.5px solid var(--border); cursor:pointer; background:transparent; color:var(--muted); transition:all .15s; white-space:nowrap; }
+  .pill.active { color:#fff; border-color:transparent; }
+  .pill-all.active    { background:var(--accent); }
+  .pill-tnt.active    { background:var(--tnt); }
+  .pill-tmb.active    { background:var(--tmb); }
+  .pill-blois.active  { background:var(--blois); }
+  .pill-montrichard.active { background:var(--montrichard); }
+  .pill-ces.active { background:linear-gradient(90deg,#dc2626,#fff); }
+  .pill-azay.active { background:linear-gradient(90deg,#16a34a,#fff); }
+  .pill-groupes.active{ background:#334155; border-color:#475569; }
+  .pill-elim.active   { background:#7c3aed; }
+
+  /* SECTION HEADER */
+  .section-wrap { max-width:680px; margin:14px auto 5px; padding:0 12px; }
+  .section-label { font-family:'Syne',sans-serif; font-size:.68rem; font-weight:700; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); display:flex; align-items:center; gap:8px; }
+  .section-label::after { content:''; flex:1; height:1px; background:var(--border); }
+  .section-label.elim { color:#a78bfa; }
+
+  /* CARDS */
+  .cards { max-width:680px; margin:0 auto; padding:0 12px; display:flex; flex-direction:column; gap:8px; }
+
+  /* CARD */
+  .card { background:var(--surface); border-radius:14px; border:1px solid var(--border); overflow:hidden; transition:transform .15s; animation:fadeIn .25s ease both; }
+  .card.has-score { border-color: rgba(255,255,255,0.12); }
+  @keyframes fadeIn { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:translateY(0)} }
+  .card-accent { height:3px; }
+  .card.tnt   .card-accent { background:var(--tnt);   box-shadow:0 0 8px rgba(249,115,22,.5); }
+  .card.tmb   .card-accent { background:var(--tmb);   box-shadow:0 0 8px rgba(239,68,68,.5); }
+  .card.blois .card-accent { background:var(--blois); box-shadow:0 0 8px rgba(34,197,94,.5); }
+  .card.montrichard .card-accent { background:var(--montrichard); box-shadow:0 0 8px rgba(234,179,8,.5); }
+  .card.ces .card-accent { background:linear-gradient(90deg,#dc2626,#fff); box-shadow:0 0 8px rgba(220,38,38,.5); }
+  .card.azay .card-accent { background:linear-gradient(90deg,#16a34a,#fff); box-shadow:0 0 8px rgba(22,163,74,.5); }
+  .card.other .card-accent { background:var(--muted); }
+  .card.elim  .card-accent { background:linear-gradient(90deg,#7c3aed,var(--accent)); }
+
+  .card-body { padding:11px 13px; display:grid; grid-template-columns:auto 1px 1fr auto; gap:10px; align-items:center; cursor:pointer; user-select:none; -webkit-tap-highlight-color:transparent; }
+
+  .time-col { display:flex; flex-direction:column; align-items:center; min-width:50px; }
+  .time { font-family:'JetBrains Mono',monospace; font-size:1.05rem; font-weight:500; color:#fff; line-height:1; }
+  .terrain-badge { font-size:.58rem; color:var(--muted); text-align:center; margin-top:3px; line-height:1.2; }
+  .divider-v { width:1px; background:var(--border); height:38px; flex-shrink:0; }
+  .match-col { padding:0 2px; min-width:0; }
+  .phase-tag { display:inline-block; font-size:.6rem; font-weight:600; letter-spacing:.06em; text-transform:uppercase; padding:2px 7px; border-radius:6px; background:rgba(255,255,255,.06); color:var(--muted); margin-bottom:4px; }
+  .phase-tag.elim { background:rgba(124,58,237,.2); color:#a78bfa; }
+  .teams { display:flex; align-items:center; gap:7px; flex-wrap:wrap; }
+  .team { font-weight:600; font-size:.88rem; padding:3px 9px; border-radius:7px; white-space:nowrap; }
+  .team.tnt   { background:rgba(249,115,22,.15); color:var(--tnt);   border:1px solid rgba(249,115,22,.3); }
+  .team.tmb   { background:rgba(239,68,68,.15);  color:var(--tmb);   border:1px solid rgba(239,68,68,.3); }
+  .team.blois { background:rgba(34,197,94,.15);  color:var(--blois); border:1px solid rgba(34,197,94,.3); }
+  .team.montrichard { background:rgba(234,179,8,.15); color:var(--montrichard); border:1px solid rgba(234,179,8,.3); }
+  .team.ces { background:linear-gradient(135deg,rgba(220,38,38,.2),rgba(255,255,255,.15)); color:#fca5a5; border:1px solid rgba(220,38,38,.4); }
+  .team.azay { background:linear-gradient(135deg,rgba(22,163,74,.2),rgba(255,255,255,.15)); color:#86efac; border:1px solid rgba(22,163,74,.4); }
+  .team.other { background:rgba(255,255,255,.05); color:var(--text);  border:1px solid var(--border); }
+  .vs { font-size:.68rem; color:var(--muted); font-weight:700; flex-shrink:0; }
+
+  /* SCORE DISPLAY */
+  .score-col { display:flex; flex-direction:column; align-items:flex-end; gap:3px; }
+  .score-pair { display:flex; gap:4px; align-items:center; }
+  .score-box { font-family:'JetBrains Mono',monospace; font-size:.95rem; font-weight:500; min-width:30px; text-align:center; padding:4px 7px; border-radius:7px; background:rgba(255,255,255,.06); color:#fff; }
+  .score-box.tnt   { background:rgba(249,115,22,.2); color:var(--tnt); }
+  .score-box.tmb   { background:rgba(239,68,68,.2);  color:var(--tmb); }
+  .score-box.blois { background:rgba(34,197,94,.2);  color:var(--blois); }
+  .score-box.montrichard { background:rgba(234,179,8,.2); color:var(--montrichard); }
+  .score-box.ces { background:linear-gradient(135deg,rgba(220,38,38,.25),rgba(255,255,255,.15)); color:#fca5a5; }
+  .score-box.azay { background:linear-gradient(135deg,rgba(22,163,74,.25),rgba(255,255,255,.15)); color:#86efac; }
+  .score-box.empty { color:var(--muted); font-size:.75rem; }
+  .score-box.winner { box-shadow:0 0 0 2px currentColor; font-weight:700; }
+  .edit-btn { font-size:.62rem; color:var(--accent); font-weight:600; text-align:right; letter-spacing:.02em; }
+
+  /* SCORE PANEL */
+  .score-panel { display:none; padding:0 13px 14px; border-top:1px solid var(--border); }
+  .score-panel.open { display:block; animation:slideDown .18s ease; }
+  @keyframes slideDown { from{opacity:0;transform:translateY(-4px)} to{opacity:1;transform:translateY(0)} }
+
+  .panel-title { font-size:.68rem; font-weight:700; color:var(--muted); letter-spacing:.08em; text-transform:uppercase; padding:11px 0 10px; }
+
+  .score-inputs { display:flex; align-items:flex-end; gap:10px; }
+  .score-team-block { display:flex; flex-direction:column; gap:5px; flex:1; }
+  .score-team-label { font-size:.72rem; font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .score-team-label.tnt   { color:var(--tnt); }
+  .score-team-label.tmb   { color:var(--tmb); }
+  .score-team-label.blois { color:var(--blois); }
+  .score-team-label.montrichard { color:var(--montrichard); }
+  .score-team-label.ces { color:#fca5a5; }
+  .score-team-label.azay { color:#86efac; }
+  .score-team-label.other { color:var(--text); }
+
+  .score-input { width:100%; background:rgba(255,255,255,.06); border:1.5px solid rgba(255,255,255,.12); border-radius:10px; padding:12px 8px; color:#fff; font-family:'JetBrains Mono',monospace; font-size:1.5rem; font-weight:500; text-align:center; outline:none; transition:border-color .2s,box-shadow .2s; -moz-appearance:textfield; appearance:textfield; }
+  .score-input::-webkit-inner-spin-button,.score-input::-webkit-outer-spin-button { -webkit-appearance:none; }
+  .score-input:focus { border-color:var(--accent); box-shadow:0 0 0 3px rgba(112,132,255,.2); }
+  .score-input.tnt:focus   { border-color:var(--tnt);   box-shadow:0 0 0 3px rgba(249,115,22,.2); }
+  .score-input.tmb:focus   { border-color:var(--tmb);   box-shadow:0 0 0 3px rgba(239,68,68,.2); }
+  .score-input.blois:focus { border-color:var(--blois); box-shadow:0 0 0 3px rgba(34,197,94,.2); }
+  .score-input.montrichard:focus { border-color:var(--montrichard); box-shadow:0 0 0 3px rgba(234,179,8,.2); }
+  .score-input.ces:focus { border-color:#dc2626; box-shadow:0 0 0 3px rgba(220,38,38,.2); }
+  .score-input.azay:focus { border-color:#16a34a; box-shadow:0 0 0 3px rgba(22,163,74,.2); }
+  .score-input.error { border-color:#ef4444 !important; }
+
+  .vs-sep { font-family:'Syne',sans-serif; font-size:1.1rem; font-weight:800; color:var(--muted); flex-shrink:0; padding-bottom:14px; }
+
+  .panel-actions { display:flex; gap:8px; margin-top:12px; }
+  .btn-ok { flex:1; padding:12px; border-radius:10px; background:var(--accent); color:#fff; font-family:'DM Sans',sans-serif; font-size:.9rem; font-weight:700; border:none; cursor:pointer; transition:opacity .15s,transform .1s; }
+  .btn-ok:active { transform:scale(.97); opacity:.85; }
+  .btn-del { padding:12px 15px; border-radius:10px; background:rgba(239,68,68,.12); color:#ef4444; font-family:'DM Sans',sans-serif; font-size:.85rem; font-weight:600; border:1px solid rgba(239,68,68,.2); cursor:pointer; }
+  .btn-del:active { opacity:.7; }
+
+  /* NO RESULTS */
+  .no-results { text-align:center; padding:40px 20px; color:var(--muted); font-size:.9rem; }
+  .no-results .emoji { font-size:2rem; display:block; margin-bottom:8px; }
+  .hidden { display:none !important; }
+
+  /* ── CLASSEMENTS ── */
+  .standings-wrap { max-width:680px; margin:20px auto 5px; padding:0 12px; }
+  .standings-table { width:100%; border-collapse:collapse; background:var(--surface); border-radius:12px; overflow:hidden; border:1px solid var(--border); }
+  .standings-table th { font-family:'Syne',sans-serif; font-size:.65rem; font-weight:700; letter-spacing:.1em; text-transform:uppercase; padding:10px 8px; background:rgba(255,255,255,.04); color:var(--muted); text-align:center; }
+  .standings-table th:first-child { text-align:left; padding-left:14px; }
+  .standings-table td { padding:9px 8px; font-size:.82rem; text-align:center; border-top:1px solid var(--border); }
+  .standings-table td:first-child { text-align:left; padding-left:14px; font-weight:600; }
+  .standings-table .rank-num { display:inline-block; width:20px; height:20px; line-height:20px; border-radius:50%; font-size:.7rem; font-weight:700; text-align:center; background:rgba(255,255,255,.06); margin-right:6px; }
+  .standings-table .rank-1 { color:var(--tnt); }
+  .standings-table .rank-2 { color:var(--montrichard); }
+  .standings-table .pts { font-weight:700; font-family:'JetBrains Mono',monospace; color:#fff; }
+
+  /* ── ÉLIMINATIONS ── */
+  .elim-sel-wrap { max-width:680px; margin:15px auto 5px; padding:0 12px; }
+  .elim-card { background:var(--surface); border-radius:12px; border:1px solid var(--border); padding:12px 14px; margin-bottom:8px; }
+  .elim-card.finale { border-color:rgba(249,115,22,.3); }
+  .elim-header { font-size:.7rem; font-weight:700; color:var(--muted); letter-spacing:.06em; text-transform:uppercase; margin-bottom:7px; }
+  .elim-header.finale { color:var(--tnt); }
+  .elim-row { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+  .elim-row select { flex:1; min-width:100px; background:rgba(255,255,255,.06); border:1.5px solid var(--border); border-radius:8px; padding:8px 10px; color:#fff; font-family:'DM Sans',sans-serif; font-size:.82rem; font-weight:500; outline:none; transition:border-color .15s; cursor:pointer; }
+  .elim-row select:focus { border-color:var(--accent); }
+  .elim-row select option { background:#1a1f2e; color:#fff; }
+  .elim-vs { font-family:'Syne',sans-serif; font-size:.8rem; font-weight:800; color:var(--muted); flex-shrink:0; }
+  .elim-saved { font-size:.6rem; color:#22c55e; font-weight:600; letter-spacing:.04em; flex-shrink:0; }
+
+  /* ── RESPONSIVE ── */
+  @media(max-width:500px) {
+    #standingsGroupes { grid-template-columns:1fr !important; }
+    .standings-table th,.standings-table td { font-size:.72rem; padding:7px 5px; }
+    .elim-row select { font-size:.75rem; padding:6px 8px; min-width:70px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <span class="trophy-icon">🏆</span>
+  <h1>Trophée <span>Paul Tavano</span><br>U13 Masculin</h1>
+  <div class="date">📅 8 MAI 2026 · SALLE PAUL TAVANO</div>
+  <div style="margin-top:8px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+    <a href="/" style="color:#fbbf24;font-size:.72rem;font-weight:600;letter-spacing:.06em;text-decoration:none;background:rgba(251,191,36,.1);padding:5px 14px;border-radius:20px;border:1px solid rgba(251,191,36,.2);transition:all .15s">🏆 Bracket</a>
+    <a href="#classements" style="color:var(--accent);font-size:.72rem;font-weight:600;letter-spacing:.06em;text-decoration:none;background:rgba(112,132,255,.12);padding:5px 14px;border-radius:20px;border:1px solid rgba(112,132,255,.2);transition:all .15s">📊 Classements</a>
+    <a href="#eliminations" style="color:#a78bfa;font-size:.72rem;font-weight:600;letter-spacing:.06em;text-decoration:none;background:rgba(124,58,237,.12);padding:5px 14px;border-radius:20px;border:1px solid rgba(124,58,237,.2);transition:all .15s">⚡ Éliminations</a>
+  </div>
+</div>
+
+<div class="legend">
+  <div class="legend-item"><div class="dot dot-tnt"></div>TNT</div>
+  <div class="legend-item"><div class="dot dot-tmb"></div>Tours MB</div>
+  <div class="legend-item"><div class="dot dot-blois"></div>ADA Blois</div>
+  <div class="legend-item"><div class="dot dot-montrichard"></div>Montrichard</div>
+  <div class="legend-item"><div class="dot dot-ces"></div>CES Tours</div>
+  <div class="legend-item"><div class="dot dot-azay"></div>Azay Cheillé</div>
+  <div class="legend-item"><div class="dot dot-other"></div>Autres</div>
+</div>
+
+<div class="search-wrap">
+  <div class="search-box">
+    <span class="sicon">🔍</span>
+    <input type="text" id="searchInput" placeholder="Rechercher équipe, heure, poule…" oninput="filterAll()">
+  </div>
+  <div class="count-badge" id="countBadge">20 matchs</div>
+</div>
+
+<div class="filter-pills">
+  <button class="pill pill-all active"  onclick="setPill('all',this)">Tous</button>
+  <button class="pill pill-tnt"         onclick="setPill('tnt',this)">🟠 TNT</button>
+  <button class="pill pill-tmb"         onclick="setPill('tmb',this)">🔴 Tours MB</button>
+  <button class="pill pill-blois"       onclick="setPill('blois',this)">🟢 ADA Blois</button>
+  <button class="pill pill-montrichard"  onclick="setPill('montrichard',this)">🟡 Montrichard</button>
+  <button class="pill pill-ces"          onclick="setPill('ces',this)">🔴⚪ CES Tours</button>
+  <button class="pill pill-azay"         onclick="setPill('azay',this)">🟢⚪ Azay Cheillé</button>
+  <button class="pill pill-groupes"     onclick="setPill('groupes',this)">Phase de groupes</button>
+  <button class="pill pill-elim"        onclick="setPill('elim',this)">⚡ Élim.</button>
+</div>
+
+<div class="section-wrap"><div class="section-label">Phase de groupes</div></div>
+
+<div class="cards" id="cardContainer">
+  <!-- Cards injected by JS -->
+  <div class="no-results hidden" id="noResults">
+    <span class="emoji">🔍</span>Aucun match trouvé
+  </div>
+</div>
+
+<!-- ── CLASSEMENTS ── -->
+<div class="standings-wrap" id="classements"><div class="section-label">📊 Classements</div></div>
+<div class="cards" style="padding:0 12px;gap:16px">
+  <div id="standingsGroupes" style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+    <div>
+      <div style="font-size:.7rem;font-weight:700;color:var(--tnt);letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px;padding-left:2px">Poule A</div>
+      <table class="standings-table"><thead><tr><th>Équipe</th><th>MJ</th><th>G</th><th>P</th><th>Pts</th></tr></thead><tbody id="standingsA"></tbody></table>
+    </div>
+    <div>
+      <div style="font-size:.7rem;font-weight:700;color:var(--accent);letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px;padding-left:2px">Poule B</div>
+      <table class="standings-table"><thead><tr><th>Équipe</th><th>MJ</th><th>G</th><th>P</th><th>Pts</th></tr></thead><tbody id="standingsB"></tbody></table>
+    </div>
+  </div>
+</div>
+
+<!-- ── TABLEAU ÉLIMINATOIRE ── -->
+<style>
+.bracket { max-width:680px; margin:18px auto 5px; padding:0 12px; }
+.bracket-round { margin-bottom:14px; }
+.bracket-title { font-family:'Syne',sans-serif; font-size:.65rem; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); margin-bottom:8px; padding-left:2px; }
+.bracket-title.elim-q { color:#a78bfa; }
+.bracket-title.elim-sf { color:#60a5fa; }
+.bracket-title.elim-f { color:var(--tnt); }
+
+.bracket-card { background:var(--surface); border-radius:10px; border:1px solid var(--border); padding:10px 12px; margin-bottom:6px; transition:border-color .2s; }
+.bracket-card.done { border-color:rgba(34,197,94,.3); }
+.bracket-card.won { border-color:rgba(249,115,22,.4); box-shadow:0 0 8px rgba(249,115,22,.15); }
+
+.bracket-meta { display:flex; justify-content:space-between; align-items:center; margin-bottom:5px; }
+.bracket-tag { font-size:.57rem; font-weight:600; letter-spacing:.06em; text-transform:uppercase; padding:2px 7px; border-radius:5px; background:rgba(124,58,237,.15); color:#a78bfa; }
+.bracket-tag.sf { background:rgba(96,165,250,.15); color:#60a5fa; }
+.bracket-tag.fin { background:rgba(249,115,22,.18); color:var(--tnt); }
+.bracket-lieu { font-size:.6rem; color:var(--muted); }
+
+.bracket-teams { display:flex; flex-direction:column; gap:3px; }
+.bracket-team { display:flex; align-items:center; gap:8px; padding:5px 8px; border-radius:7px; font-size:.82rem; font-weight:500; transition:all .2s; }
+.bracket-team .name { flex:1; }
+.bracket-team .scr { font-family:'JetBrains Mono',monospace; font-size:.85rem; font-weight:600; min-width:24px; text-align:center; }
+.bracket-team.winner { background:rgba(249,115,22,.1); border:1px solid rgba(249,115,22,.25); }
+.bracket-team.loser { opacity:.5; }
+.bracket-team.tnt   .scr { color:var(--tnt); }
+.bracket-team.tmb   .scr { color:var(--tmb); }
+.bracket-team.blois .scr { color:#22c55e; }
+.bracket-team.montrichard .scr { color:var(--montrichard); }
+.bracket-team.ces .scr { color:#fca5a5; }
+.bracket-team.azay .scr { color:#86efac; }
+.bracket-team.other .scr { color:var(--muted); }
+.bracket-team .adv { font-size:.65rem; color:#22c55e; font-weight:700; margin-left:auto; }
+
+.bracket-arrow { text-align:center; padding:2px 0 8px; font-size:.7rem; color:var(--muted); }
+.bracket-arrow span { display:inline-block; background:var(--surface); padding:2px 10px; border-radius:10px; border:1px solid var(--border); }
+
+.bracket-empty { text-align:center; padding:20px; color:var(--muted); font-size:.78rem; }
+.bracket-empty .eicon { font-size:1.5rem; display:block; margin-bottom:5px; }
+</style>
+
+<div class="section-wrap" style="margin-top:18px" id="bracketSection"><div class="section-label elim">🏆 Tableau éliminatoire</div></div>
+<div class="bracket" id="bracketContainer">
+  <div class="bracket-round" id="bracketQF">
+    <div class="bracket-title elim-q">⚡ Quarts de finale</div>
+    <div id="bracketQFInner"></div>
+  </div>
+  <div class="bracket-round" id="bracketSF">
+    <div class="bracket-title elim-sf">🔥 Demi-finales</div>
+    <div id="bracketSFInner"></div>
+  </div>
+  <div class="bracket-round" id="bracketFinal">
+    <div class="bracket-title elim-f">🏆 Finale & 3ᵉ place</div>
+    <div id="bracketFinalInner"></div>
+  </div>
+</div>
+
+<!-- ── ÉLIMINATIONS ── -->
+<div class="section-wrap" style="margin-top:18px" id="eliminations"><div class="section-label elim">⚡ Phase éliminatoire — Sélection des équipes</div></div>
+<div class="elim-sel-wrap" id="elimContainer"></div>
+
+<script>
+// ── DATA ──
+const MATCHES = [
+  // id, heure, terrain, phase, poule, tag, t1, c1, t2, c2, teamKeys
+  {id:'1',  time:'09:15', terrain:'Salle Paul Tavano',   phase:'groupes', poule:'b', tag:'Poule B',          t1:'TNT2',              c1:'tnt',   t2:'Montrichard',          c2:'montrichard', cardClass:'tnt',   teams:'tnt2 montrichard'},
+  {id:'2',  time:'09:35', terrain:'Salle Paul Tavano',   phase:'groupes', poule:'a', tag:'Poule A',          t1:'ADA Blois',         c1:'blois', t2:'Azay Cheillé',         c2:'azay', cardClass:'blois', teams:'ada blois azay cheille'},
+  {id:'3',  time:'09:55', terrain:'Salle Paul Tavano',   phase:'groupes', poule:'b', tag:'Poule B',          t1:'Tours MB',          c1:'tmb',   t2:'CRA Basket',           c2:'other', cardClass:'tmb',   teams:'tours mb cra basket'},
+  {id:'4',  time:'10:15', terrain:'Salle Paul Tavano',   phase:'groupes', poule:'a', tag:'Poule A',          t1:'TNT1',              c1:'tnt',   t2:'ADA Blois',            c2:'blois', cardClass:'tnt',   teams:'tnt1 ada blois'},
+  {id:'5',  time:'10:35', terrain:'Salle Paul Tavano',   phase:'groupes', poule:'b', tag:'Poule B',          t1:'CRA Basket',        c1:'other', t2:'TNT2',                 c2:'tnt',   cardClass:'tnt',   teams:'cra basket tnt2'},
+  {id:'6',  time:'10:55', terrain:'Salle Paul Tavano',   phase:'groupes', poule:'a', tag:'Poule A',          t1:'Azay Cheillé',      c1:'azay', t2:'CES Tours',            c2:'ces', cardClass:'ces', teams:'azay cheille ces tours'},
+  {id:'7',  time:'11:15', terrain:'Salle Paul Tavano',   phase:'groupes', poule:'b', tag:'Poule B',          t1:'Tours MB',          c1:'tmb',   t2:'Montrichard',          c2:'montrichard', cardClass:'tmb',   teams:'tours mb montrichard'},
+  {id:'8',  time:'11:35', terrain:'Salle Paul Tavano',   phase:'groupes', poule:'a', tag:'Poule A',          t1:'CES Tours',         c1:'ces', t2:'TNT1',                 c2:'tnt',   cardClass:'tnt',   teams:'ces tours tnt1'},
+  {id:'9',  time:'11:55', terrain:'Salle Paul Tavano',   phase:'groupes', poule:'b', tag:'Poule B',          t1:'Montrichard',       c1:'montrichard', t2:'CRA Basket',           c2:'other', cardClass:'montrichard', teams:'montrichard cra basket'},
+  {id:'10', time:'13:15', terrain:'Salle Paul Tavano',   phase:'groupes', poule:'a', tag:'Poule A',          t1:'TNT1',              c1:'tnt',   t2:'Azay Cheillé',         c2:'azay', cardClass:'tnt',   teams:'tnt1 azay cheille'},
+  {id:'11', time:'13:35', terrain:'Salle Paul Tavano',   phase:'groupes', poule:'b', tag:'Poule B',          t1:'TNT2',              c1:'tnt',   t2:'Tours MB',          c2:'tmb', cardClass:'tnt',   teams:'tnt2 tours mb'},
+  {id:'12', time:'13:55', terrain:'Salle Paul Tavano',   phase:'groupes', poule:'a', tag:'Poule A',          t1:'ADA Blois',         c1:'blois', t2:'CES Tours',            c2:'ces', cardClass:'blois', teams:'ada blois ces tours'},
+  // élim
+  {id:'13', time:'14:15', terrain:'Petite salle',        phase:'elim', poule:'', tag:'3ème 1/4 F',           t1:'Tours MB',           c1:'tmb',   t2:'CES Tours',            c2:'ces', cardClass:'elim', teams:'tours mb ces tours'},
+  {id:'14', time:'14:20', terrain:'Salle Paul Tavano',   phase:'elim', poule:'', tag:'1er 1/4 F',            t1:'ADA Blois',          c1:'blois', t2:'CRA Basket',           c2:'other', cardClass:'elim', teams:'ada blois cra basket'},
+  {id:'15', time:'14:35', terrain:'Petite salle',        phase:'elim', poule:'', tag:'4ème 1/4 F',           t1:'TNT2',               c1:'tnt',   t2:'Azay Cheillé',         c2:'azay', cardClass:'elim', teams:'tnt2 azay cheille'},
+  {id:'16', time:'14:40', terrain:'Salle Paul Tavano',   phase:'elim', poule:'', tag:'2ème 1/4 F',           t1:'TNT1',               c1:'tnt',   t2:'Montrichard',          c2:'montrichard', cardClass:'elim', teams:'tnt1 montrichard'},
+  {id:'17', time:'15:15', terrain:'Salle Paul Tavano',   phase:'elim', poule:'', tag:'1ère 1/2 F',           t1:'TNT1',                 c1:'tnt',   t2:'Tours MB',                 c2:'tmb', cardClass:'elim', teams:'tnt1 tours mb'},
+  {id:'18', time:'15:45', terrain:'Salle Paul Tavano',   phase:'elim', poule:'', tag:'2ème 1/2 F',           t1:'ADA Blois',          c1:'blois', t2:'TNT2',                 c2:'tnt', cardClass:'elim', teams:'ada blois tnt2'},
+  {id:'19', time:'15:25', terrain:'Aire Pierrot Vérité', phase:'elim', poule:'', tag:'Match 3ème place',     t1:'Perdant 1ère 1/2 F',c1:'other', t2:'Perdant 2ème 1/2 F',  c2:'other', cardClass:'elim', teams:'perdant 1ere 2eme 1/2 f'},
+  {id:'20', time:'15:30', terrain:'Salle Paul Tavano',   phase:'elim', poule:'', tag:'🏆 FINALE U13M',       t1:'Gagnant 1ère 1/2 F',c1:'other', t2:'Gagnant 2ème 1/2 F',  c2:'other', cardClass:'elim finale', teams:'gagnant 1ere 2eme 1/2 f finale'},
+];
+
+// ── STORAGE (Google Sheets via API) ──
+let scores = {};
+let eliminations = {};
+let loadingPromise = null;
+
+async function loadScores() {
+  try {
+    const resp = await fetch('/api/score');
+    const data = await resp.json();
+    if (data.success) {
+      scores = data.scores || {};
+      eliminations = data.eliminations || {};
+    }
+  } catch(e) {
+    console.warn('Impossible de charger les scores:', e);
+  }
+  MATCHES.forEach(m => renderDisp(m.id, m.c1, m.c2));
+  renderStandings();
+  renderBracket();
+  renderElimSelectors();
+}
+loadingPromise = loadScores();
+
+async function persist(id) {
+  const s = scores[id];
+  try {
+    await fetch('/api/score', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        match_id: id,
+        score1: s ? s.s1 : '',
+        score2: s ? s.s2 : ''
+      })
+    });
+    renderStandings();
+    renderBracket();
+  } catch(e) {
+    console.warn('Erreur sauvegarde:', e);
+  }
+}
+
+async function saveElim(matchId) {
+  const sel1 = document.getElementById('elim-t1-' + matchId);
+  const sel2 = document.getElementById('elim-t2-' + matchId);
+  const team1 = sel1.value;
+  const team2 = sel2.value;
+  eliminations[matchId] = { team1, team2 };
+  try {
+    await fetch('/api/score', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ type: 'elimination', match_id: matchId, team1, team2 })
+    });
+    const saved = document.getElementById('elim-saved-' + matchId);
+    if (saved) saved.textContent = '✓ sauvegardé';
+  } catch(e) {
+    console.warn('Erreur sauvegarde élimination:', e);
+  }
+}
+
+// ── BUILD CARDS ──
+const container = document.getElementById('cardContainer');
+const noRes     = document.getElementById('noResults');
+let elimSectionInserted = false;
+
+MATCHES.forEach(m => {
+  // Insert élim section header
+  if (m.phase === 'elim' && !elimSectionInserted) {
+    elimSectionInserted = true;
+    const sh = document.createElement('div');
+    sh.innerHTML = '<div class="section-wrap" style="margin-top:6px"><div class="section-label elim">⚡ Phase éliminatoire</div></div>';
+    container.insertBefore(sh, noRes);
+  }
+
+  const isElim = m.phase === 'elim';
+  const isFinale = m.cardClass.includes('finale');
+
+  const tagClass = isElim ? 'elim' : '';
+  const tagStyle = isFinale ? 'style="background:rgba(249,115,22,.18);color:#F97316;"' : '';
+  const accentStyle = isFinale
+    ? 'style="background:linear-gradient(90deg,#F97316,#7084FF,#22c55e);height:4px;"'
+    : '';
+
+  const div = document.createElement('div');
+  div.className = `card ${m.cardClass}`;
+  div.id = `card-${m.id}`;
+  div.dataset.id = m.id;
+  div.dataset.phase = m.phase;
+  div.dataset.teams = m.teams;
+  div.dataset.time  = m.time;
+  div.dataset.poule = m.poule;
+
+  div.innerHTML = `
+    <div class="card-accent" ${accentStyle}></div>
+    <div class="card-body" onclick="togglePanel('${m.id}')">
+      <div class="time-col">
+        <div class="time">${m.time}</div>
+        <div class="terrain-badge">${m.terrain.replace(' ','\n')}</div>
+      </div>
+      <div class="divider-v"></div>
+      <div class="match-col">
+        <div><span class="phase-tag ${tagClass}" ${tagStyle}>${m.tag}</span></div>
+        <div class="teams">
+          <span class="team ${m.c1}">${m.t1}</span>
+          <span class="vs">VS</span>
+          <span class="team ${m.c2}">${m.t2}</span>
+        </div>
+      </div>
+      <div class="score-col">
+        <div class="score-pair" id="disp-${m.id}"></div>
+        <div class="edit-btn" id="hint-${m.id}">✏️ saisir</div>
+      </div>
+    </div>
+    <div class="score-panel" id="panel-${m.id}">
+      <div class="panel-title">⚽ Saisir le score</div>
+      <div class="score-inputs">
+        <div class="score-team-block">
+          <div class="score-team-label ${m.c1}">${m.t1}</div>
+          <input class="score-input ${m.c1}" id="i1-${m.id}" type="number" min="0" max="999" placeholder="0" inputmode="numeric">
+        </div>
+        <div class="vs-sep">–</div>
+        <div class="score-team-block">
+          <div class="score-team-label ${m.c2}">${m.t2}</div>
+          <input class="score-input ${m.c2}" id="i2-${m.id}" type="number" min="0" max="999" placeholder="0" inputmode="numeric">
+        </div>
+      </div>
+      <div class="panel-actions">
+        <button class="btn-ok"  onclick="saveScore('${m.id}')">✅ Valider le score</button>
+        <button class="btn-del" onclick="delScore('${m.id}')">🗑</button>
+      </div>
+    </div>
+  `;
+  container.insertBefore(div, noRes);
+  renderDisp(m.id, m.c1, m.c2);
+});
+
+// ── RENDER DISPLAY ──
+function renderDisp(id, c1, c2) {
+  const m = MATCHES.find(x => x.id === id);
+  c1 = c1 || m.c1; c2 = c2 || m.c2;
+  const disp = document.getElementById('disp-' + id);
+  const hint = document.getElementById('hint-' + id);
+  const card = document.getElementById('card-' + id);
+  const s = scores[id];
+  if (s) {
+    const n1 = parseInt(s.s1), n2 = parseInt(s.s2);
+    const w1 = n1 > n2 ? 'winner' : '';
+    const w2 = n2 > n1 ? 'winner' : '';
+    disp.innerHTML = `
+      <div class="score-box ${c1} ${w1}">${s.s1}</div>
+      <div style="color:var(--muted);font-size:.7rem;font-weight:700;padding:0 1px">–</div>
+      <div class="score-box ${c2} ${w2}">${s.s2}</div>`;
+    hint.textContent = '✏️ modifier';
+    card.classList.add('has-score');
+  } else {
+    disp.innerHTML = `<div class="score-box empty">–</div><div class="score-box empty">–</div>`;
+    hint.textContent = '✏️ saisir';
+    card.classList.remove('has-score');
+  }
+}
+
+// ── TOGGLE PANEL ──
+function togglePanel(id) {
+  const panel = document.getElementById('panel-' + id);
+  const isOpen = panel.classList.contains('open');
+  document.querySelectorAll('.score-panel.open').forEach(p => p.classList.remove('open'));
+  if (!isOpen) {
+    panel.classList.add('open');
+    const s = scores[id];
+    const i1 = document.getElementById('i1-' + id);
+    const i2 = document.getElementById('i2-' + id);
+    i1.value = s ? s.s1 : '';
+    i2.value = s ? s.s2 : '';
+    i1.classList.remove('error'); i2.classList.remove('error');
+    setTimeout(() => i1.focus(), 150);
+  }
+}
+
+// ── SAVE SCORE ──
+async function saveScore(id) {
+  const i1 = document.getElementById('i1-' + id);
+  const i2 = document.getElementById('i2-' + id);
+  const v1 = i1.value.trim(), v2 = i2.value.trim();
+  let ok = true;
+  if (v1 === '') { i1.classList.add('error'); ok = false; } else i1.classList.remove('error');
+  if (v2 === '') { i2.classList.add('error'); ok = false; } else i2.classList.remove('error');
+  if (!ok) return;
+  scores[id] = { s1: v1, s2: v2 };
+  await persist(id);
+  renderDisp(id);
+  document.getElementById('panel-' + id).classList.remove('open');
+}
+
+// ── DELETE SCORE ──
+async function delScore(id) {
+  delete scores[id];
+  await persist(id);
+  renderDisp(id);
+  document.getElementById('panel-' + id).classList.remove('open');
+}
+
+// ── FILTER ──
+let activePill = 'all';
+function setPill(type, btn) {
+  activePill = type;
+  document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  filterAll();
+}
+function filterAll() {
+  const q = document.getElementById('searchInput').value.toLowerCase().trim();
+  let visible = 0;
+  MATCHES.forEach(m => {
+    const card = document.getElementById('card-' + m.id);
+    if (!card) return;
+    const full = m.teams + ' ' + m.time + ' ' + m.poule + ' ' + m.phase;
+    const mS = !q || full.includes(q);
+    let mP = true;
+    if (activePill === 'tnt')     mP = m.teams.includes('tnt');
+    if (activePill === 'tmb')     mP = m.teams.includes('tours mb');
+    if (activePill === 'blois')   mP = m.teams.includes('blois') || m.teams.includes('ada');
+    if (activePill === 'montrichard') mP = m.teams.includes('montrichard');
+    if (activePill === 'ces') mP = m.teams.includes('ces');
+    if (activePill === 'azay') mP = m.teams.includes('azay');
+    if (activePill === 'groupes') mP = m.phase === 'groupes';
+    if (activePill === 'elim')    mP = m.phase === 'elim';
+    if (mS && mP) { card.style.display = ''; visible++; }
+    else card.style.display = 'none';
+  });
+  document.getElementById('countBadge').textContent = visible + ' match' + (visible !== 1 ? 's' : '');
+  document.getElementById('noResults').classList.toggle('hidden', visible > 0);
+}
+
+// ── CLASSEMENTS ──
+const POULE_A_TEAMS = { 'TNT1':'tnt', 'ADA Blois':'blois', 'CES Tours':'ces', 'Azay Cheillé':'azay' };
+const POULE_B_TEAMS = { 'TNT2':'tnt', 'Tours MB':'tmb', 'Montrichard':'montrichard', 'CRA Basket':'other' };
+
+function computeStandings(pouleTeams) {
+  const teams = {};
+  Object.keys(pouleTeams).forEach(name => { teams[name] = { name, mj:0, g:0, p:0, pts:0, color: pouleTeams[name] }; });
+  
+  const matchIds = Object.keys(pouleTeams).length === 4
+    ? [1,2,3,4,5,6,7,8,9,10,11,12] // both poules
+    : MATCHES.filter(m => m.phase === 'groupes' && m.poule === (pouleTeams === POULE_A_TEAMS ? 'a' : 'b')).map(m => m.id);
+
+  matchIds.forEach(id => {
+    const m = MATCHES.find(x => String(x.id) === String(id));
+    if (!m) return;
+    const s = scores[id];
+    if (!s || !s.s1 || !s.s2) return;
+    const n1 = parseInt(s.s1), n2 = parseInt(s.s2);
+    if (isNaN(n1) || isNaN(n2)) return;
+    
+    if (teams[m.t1]) {
+      teams[m.t1].mj++;
+      if (n1 > n2) { teams[m.t1].g++; teams[m.t1].pts += 2; }
+      else { teams[m.t1].p++; teams[m.t1].pts += 1; }
+    }
+    if (teams[m.t2]) {
+      teams[m.t2].mj++;
+      if (n2 > n1) { teams[m.t2].g++; teams[m.t2].pts += 2; }
+      else { teams[m.t2].p++; teams[m.t2].pts += 1; }
+    }
+  });
+  
+  return Object.values(teams).sort((a, b) => b.pts - a.pts || b.g - a.g);
+}
+
+function renderStandings() {
+  const stdA = computeStandings(POULE_A_TEAMS);
+  const stdB = computeStandings(POULE_B_TEAMS);
+  
+  ['A', 'B'].forEach(p => {
+    const tbody = document.getElementById('standings' + p);
+    const data = p === 'A' ? stdA : stdB;
+    tbody.innerHTML = data.map((t, i) => {
+      const rankColor = i < 2 ? `rank-${i+1}` : '';
+      return `<tr>
+        <td><span class="rank-num ${rankColor}">${i+1}</span><span class="team ${t.color}" style="padding:2px 7px;font-size:.78rem">${t.name}</span></td>
+        <td>${t.mj}</td>
+        <td style="color:#22c55e;font-weight:600">${t.g}</td>
+        <td style="color:#ef4444;font-weight:600">${t.p}</td>
+        <td class="pts">${t.pts}</td>
+      </tr>`;
+    }).join('');
+  });
+}
+
+// ── ÉLIMINATIONS ──
+const ELIM_MATCHES = [
+  {id:'13', tag:'3ᵉ 1/4 F', terrain:'Petite salle · 14:15'},
+  {id:'14', tag:'1ᵉʳ 1/4 F', terrain:'Salle Paul Tavano · 14:20'},
+  {id:'15', tag:'4ᵉ 1/4 F', terrain:'Petite salle · 14:35'},
+  {id:'16', tag:'2ᵉ 1/4 F', terrain:'Salle Paul Tavano · 14:40'},
+  {id:'17', tag:'1ʳᵉ 1/2 F', terrain:'Salle Paul Tavano · 15:15'},
+  {id:'18', tag:'2ᵉ 1/2 F', terrain:'Salle Paul Tavano · 15:45'},
+  {id:'19', tag:'🥉 3ᵉ place', terrain:'Aire Pierrot Vérité'},
+  {id:'20', tag:'🏆 FINALE', terrain:'Salle Paul Tavano'},
+];
+
+function getAllTeams() {
+  const all = {};
+  Object.keys(POULE_A_TEAMS).forEach(n => { all[n] = POULE_A_TEAMS[n]; });
+  Object.keys(POULE_B_TEAMS).forEach(n => { all[n] = POULE_B_TEAMS[n]; });
+  return all;
+}
+// ── TABLEAU ÉLIMINATOIRE ──
+const BRACKET_QF = [
+  {id:'14', label:'1er 1/4 F', t1:'ADA Blois', t2:'CRA Basket', c1:'blois', c2:'other', goesTo:'sf1'},
+  {id:'13', label:'3ème 1/4 F', t1:'Tours MB', t2:'CES Tours', c1:'tmb', c2:'ces', goesTo:'sf1'},
+  {id:'16', label:'2ème 1/4 F', t1:'TNT1', t2:'Montrichard', c1:'tnt', c2:'montrichard', goesTo:'sf2'},
+  {id:'15', label:'4ème 1/4 F', t1:'TNT2', t2:'Azay Cheillé', c1:'tnt', c2:'azay', goesTo:'sf2'},
+];
+const BRACKET_SF = [
+  {id:'17', label:'1ère 1/2 F', sf:'sf1'},
+  {id:'18', label:'2ème 1/2 F', sf:'sf2'},
+];
+
+function getWinner(id) {
+  const s = scores[id];
+  if (!s || !s.s1 || !s.s2) return null;
+  const n1 = parseInt(s.s1), n2 = parseInt(s.s2);
+  if (isNaN(n1) || isNaN(n2)) return null;
+  const match = MATCHES.find(m => String(m.id) === String(id));
+  if (!match) return null;
+  return n1 > n2 ? match.t1 : match.t2;
+}
+
+function getScoreStr(id) {
+  const s = scores[id];
+  if (!s) return null;
+  return s.s1 && s.s2 ? `${s.s1}–${s.s2}` : null;
+}
+
+function getTeamColor(name) {
+  const m = MATCHES.find(x => x.t1 === name);
+  return m ? m.c1 : 'other';
+}
+
+function renderBracket() {
+  // Quarts
+  const qfInner = document.getElementById('bracketQFInner');
+  qfInner.innerHTML = BRACKET_QF.map(q => {
+    const s = scores[q.id];
+    const done = s && s.s1 && s.s2;
+    const n1 = done ? parseInt(s.s1) : null;
+    const n2 = done ? parseInt(s.s2) : null;
+    const w1 = done && n1 > n2;
+    const w2 = done && n2 > n1;
+    const scoreStr = done ? `${s.s1}–${s.s2}` : '–';
+    const winner = done ? (n1 > n2 ? q.t1 : q.t2) : null;
+    
+    return `
+      <div class="bracket-card ${done ? 'done' : ''} ${done ? 'won' : ''}">
+        <div class="bracket-meta">
+          <span class="bracket-tag">${q.label}</span>
+        </div>
+        <div class="bracket-teams">
+          <div class="bracket-team ${q.c1} ${w1 ? 'winner' : (!done ? '' : 'loser')}">
+            <span class="name">${q.t1}</span>
+            <span class="scr">${done ? s.s1 : '–'}</span>
+            ${w1 ? '<span class="adv">➜ qualifié</span>' : ''}
+          </div>
+          <div class="bracket-team ${q.c2} ${w2 ? 'winner' : (!done ? '' : 'loser')}">
+            <span class="name">${q.t2}</span>
+            <span class="scr">${done ? s.s2 : '–'}</span>
+            ${w2 ? '<span class="adv">➜ qualifié</span>' : ''}
+          </div>
+        </div>
+      </div>`;
+  }).join('');
+
+  // Demies
+  const sfInner = document.getElementById('bracketSFInner');
+  sfInner.innerHTML = BRACKET_SF.map(sf => {
+    const qfMatchIds = BRACKET_QF.filter(q => q.goesTo === sf.sf).map(q => q.id);
+    const winners = qfMatchIds.map(id => getWinner(id)).filter(w => w !== null);
+    const allPlayed = qfMatchIds.every(id => {
+      const s = scores[id];
+      return s && s.s1 && s.s2;
+    });
+    
+    const sfMatch = MATCHES.find(m => String(m.id) === String(sf.id));
+    const sfScore = scores[sf.id];
+    const sfDone = sfScore && sfScore.s1 && sfScore.s2;
+    const sn1 = sfDone ? parseInt(sfScore.s1) : null;
+    const sn2 = sfDone ? parseInt(sfScore.s2) : null;
+    const sw1 = sfDone && sn1 > sn2;
+    
+    const team1 = winners[0] || (allPlayed ? '—' : '?');
+    const team2 = winners[1] || (allPlayed ? '—' : '?');
+    const c1 = team1 !== '?' && team1 !== '—' ? getTeamColor(team1) : 'other';
+    const c2 = team2 !== '?' && team2 !== '—' ? getTeamColor(team2) : 'other';
+    
+    const scoreStr = sfDone ? `${sfScore.s1}–${sfScore.s2}` : '–';
+    
+    return `
+      ${allPlayed ? `<div class="bracket-arrow"><span>⬆ ${winners[0] || '?'} et ${winners[1] || '?'} s'affrontent</span></div>` : ''}
+      <div class="bracket-card ${allPlayed ? 'done' : ''} ${sfDone ? 'won' : ''}">
+        <div class="bracket-meta">
+          <span class="bracket-tag sf">${sf.label}</span>
+        </div>
+        <div class="bracket-teams">
+          <div class="bracket-team ${c1} ${sw1 ? 'winner' : (!sfDone ? '' : 'loser')}">
+            <span class="name">${team1}</span>
+            <span class="scr">${sfDone ? sfScore.s1 : '–'}</span>
+            ${sw1 ? '<span class="adv">➜ Finale</span>' : ''}
+          </div>
+          <div class="bracket-team ${c2} ${sfDone && !sw1 ? 'winner' : (!sfDone ? '' : 'loser')}">
+            <span class="name">${team2}</span>
+            <span class="scr">${sfDone ? sfScore.s2 : '–'}</span>
+            ${sfDone && !sw1 ? '<span class="adv">➜ Finale</span>' : ''}
+          </div>
+        </div>
+      </div>`;
+  }).join('');
+
+  // Finale + 3ème
+  const finalInner = document.getElementById('bracketFinalInner');
+  const sfWinners = BRACKET_SF.map(sf => {
+    const s = scores[sf.id];
+    if (!s || !s.s1 || !s.s2) return null;
+    const n1 = parseInt(s.s1), n2 = parseInt(s.s2);
+    if (isNaN(n1) || isNaN(n2)) return null;
+    const qfIds = BRACKET_QF.filter(q => q.goesTo === sf.sf).map(q => q.id);
+    const qWinners = qfIds.map(id => getWinner(id));
+    const sfMatch = MATCHES.find(m => String(m.id) === String(sf.id));
+    if (!sfMatch) return null;
+    return n1 > n2 ? qWinners[0] || sfMatch.t1 : qWinners[1] || sfMatch.t2;
+  }).filter(w => w !== null);
+
+  const sfLosers = BRACKET_SF.map(sf => {
+    const s = scores[sf.id];
+    if (!s || !s.s1 || !s.s2) return null;
+    const n1 = parseInt(s.s1), n2 = parseInt(s.s2);
+    if (isNaN(n1) || isNaN(n2)) return null;
+    const qfIds = BRACKET_QF.filter(q => q.goesTo === sf.sf).map(q => q.id);
+    const qWinners = qfIds.map(id => getWinner(id));
+    const sfMatch = MATCHES.find(m => String(m.id) === String(sf.id));
+    if (!sfMatch) return null;
+    return n1 > n2 ? qWinners[1] || sfMatch.t2 : qWinners[0] || sfMatch.t1;
+  }).filter(w => w !== null);
+
+  const allSfDone = BRACKET_SF.every(sf => {
+    const s = scores[sf.id];
+    return s && s.s1 && s.s2;
+  });
+  const someSfDone = BRACKET_SF.some(sf => {
+    const s = scores[sf.id];
+    return s && s.s1 && s.s2;
+  });
+
+  let finalHtml = '';
+  
+  // Finale
+  const fScore = scores['20'];
+  const fDone = fScore && fScore.s1 && fScore.s2;
+  const fn1 = fDone ? parseInt(fScore.s1) : null;
+  const fn2 = fDone ? parseInt(fScore.s2) : null;
+  const fw1 = fDone && fn1 > fn2;
+  
+  const fTeam1 = sfWinners[0] || (allSfDone ? '—' : '?');
+  const fTeam2 = sfWinners[1] || (allSfDone ? '—' : '?');
+  const fc1 = fTeam1 !== '?' && fTeam1 !== '—' ? getTeamColor(fTeam1) : 'other';
+  const fc2 = fTeam2 !== '?' && fTeam2 !== '—' ? getTeamColor(fTeam2) : 'other';
+  
+  finalHtml += `
+    <div class="bracket-card ${allSfDone ? 'done' : ''} ${fDone ? 'won' : ''}" style="border-color:${fDone ? 'rgba(249,115,22,.5)' : ''}">
+      <div class="bracket-meta">
+        <span class="bracket-tag fin" style="${fDone ? 'background:rgba(249,115,22,.25)' : ''}">${fDone ? '🏆' : ''} FINALE</span>
+      </div>
+      ${allSfDone ? `<div style="font-size:.65rem;color:var(--muted);margin-bottom:4px">⬆ ${fTeam1} vs ${fTeam2}</div>` : ''}
+      <div class="bracket-teams">
+        <div class="bracket-team ${fc1} ${fw1 ? 'winner' : (!fDone ? '' : 'loser')}">
+          <span class="name">${fTeam1}</span>
+          <span class="scr">${fDone ? fScore.s1 : '–'}</span>
+          ${fw1 ? '<span class="adv">🏆 CHAMPION</span>' : ''}
+        </div>
+        <div class="bracket-team ${fc2} ${fDone && !fw1 ? 'winner' : (!fDone ? '' : 'loser')}">
+          <span class="name">${fTeam2}</span>
+          <span class="scr">${fDone ? fScore.s2 : '–'}</span>
+          ${fDone && !fw1 ? '<span class="adv">🏆 CHAMPION</span>' : ''}
+        </div>
+      </div>
+    </div>`;
+
+  // 3ème place
+  const tScore = scores['19'];
+  const tDone = tScore && tScore.s1 && tScore.s2;
+  const tn1 = tDone ? parseInt(tScore.s1) : null;
+  const tn2 = tDone ? parseInt(tScore.s2) : null;
+  const tw1 = tDone && tn1 > tn2;
+  
+  const tTeam1 = sfLosers[0] || (someSfDone ? (sfLosers[0] || '—') : '?');
+  const tTeam2 = sfLosers[1] || (someSfDone ? (sfLosers[1] || '—') : '?');
+  const tc1 = tTeam1 !== '?' && tTeam1 !== '—' ? getTeamColor(tTeam1) : 'other';
+  const tc2 = tTeam2 !== '?' && tTeam2 !== '—' ? getTeamColor(tTeam2) : 'other';
+
+  finalHtml += `
+    <div style="margin-top:8px;">
+      <div class="bracket-card ${someSfDone ? 'done' : ''}">
+        <div class="bracket-meta">
+          <span class="bracket-tag">🥉 3ème place</span>
+        </div>
+        ${sfLosers.length >= 2 ? `<div style="font-size:.65rem;color:var(--muted);margin-bottom:4px">⬇ ${tTeam1} vs ${tTeam2}</div>` : ''}
+        <div class="bracket-teams">
+          <div class="bracket-team ${tc1} ${tw1 ? 'winner' : (!tDone ? '' : 'loser')}">
+            <span class="name">${tTeam1}</span>
+            <span class="scr">${tDone ? tScore.s1 : '–'}</span>
+            ${tw1 ? '<span class="adv">🥉 3ème</span>' : ''}
+          </div>
+          <div class="bracket-team ${tc2} ${tDone && !tw1 ? 'winner' : (!tDone ? '' : 'loser')}">
+            <span class="name">${tTeam2}</span>
+            <span class="scr">${tDone ? tScore.s2 : '–'}</span>
+            ${tDone && !tw1 ? '<span class="adv">🥉 3ème</span>' : ''}
+          </div>
+        </div>
+      </div>
+    </div>`;
+
+  finalInner.innerHTML = finalHtml;
+}
+
+// ── ÉLIMINATIONS ──
+function renderElimSelectors() {
+  const container = document.getElementById('elimContainer');
+  if (!container) return;
+  const allTeams = getAllTeams();
+  
+  container.innerHTML = ELIM_MATCHES.map(m => {
+    const isFinale = m.id === '20';
+    const saved = eliminations[m.id] || {};
+    
+    const options = Object.keys(allTeams).map(name => 
+      `<option value="${name}" ${saved.team1 === name ? 'selected' : ''}>${name}</option>`
+    ).join('');
+    
+    const options2 = Object.keys(allTeams).map(name => 
+      `<option value="${name}" ${saved.team2 === name ? 'selected' : ''}>${name}</option>`
+    ).join('');
+    
+    return `<div class="elim-card ${isFinale ? 'finale' : ''}">
+      <div class="elim-header ${isFinale ? 'finale' : ''}">${m.tag} · ${isFinale ? '⭐' : ''} ${m.terrain}</div>
+      <div class="elim-row">
+        <select id="elim-t1-${m.id}" onchange="saveElim('${m.id}')">${options}</select>
+        <span class="elim-vs">VS</span>
+        <select id="elim-t2-${m.id}" onchange="saveElim('${m.id}')">${options2}</select>
+        <span class="elim-saved" id="elim-saved-${m.id}">${saved.team1 ? '✓ sauvegardé' : ''}</span>
+      </div>
+    </div>`;
+  }).join('');
+}
+document.addEventListener('click', e => {
+  if (!e.target.closest('.card')) {
+    document.querySelectorAll('.score-panel.open').forEach(p => p.classList.remove('open'));
+  }
+});
+
+// Enter to validate
+document.addEventListener('keydown', async e => {
+  if (e.key === 'Enter') {
+    const open = document.querySelector('.score-panel.open');
+    if (open) await saveScore(open.id.replace('panel-',''));
+  }
+});
+</script>
+</body>
+</html>
