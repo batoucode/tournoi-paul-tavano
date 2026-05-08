@@ -211,11 +211,40 @@ const MATCHES = [
   {id:'20', time:'15:30', terrain:'Salle Paul Tavano',   phase:'elim', poule:'', tag:'🏆 FINALE U13M',       t1:'Gagnant 1ère 1/2 F',c1:'other', t2:'Gagnant 2ème 1/2 F',  c2:'other', cardClass:'elim finale', teams:'gagnant 1ere 2eme 1/2 f finale'},
 ];
 
-// ── STORAGE ──
-const KEY = 'ptavano26';
+// ── STORAGE (Google Sheets via API) ──
 let scores = {};
-try { scores = JSON.parse(localStorage.getItem(KEY)) || {}; } catch(e) {}
-function persist() { localStorage.setItem(KEY, JSON.stringify(scores)); }
+let loadingPromise = null;
+
+async function loadScores() {
+  try {
+    const resp = await fetch('/api/score');
+    const data = await resp.json();
+    if (data.success) {
+      scores = data.scores || {};
+    }
+  } catch(e) {
+    console.warn('Impossible de charger les scores:', e);
+  }
+  MATCHES.forEach(m => renderDisp(m.id, m.c1, m.c2));
+}
+loadingPromise = loadScores();
+
+async function persist(id) {
+  const s = scores[id];
+  try {
+    await fetch('/api/score', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        match_id: id,
+        score1: s ? s.s1 : '',
+        score2: s ? s.s2 : ''
+      })
+    });
+  } catch(e) {
+    console.warn('Erreur sauvegarde:', e);
+  }
+}
 
 // ── BUILD CARDS ──
 const container = document.getElementById('cardContainer');
@@ -336,7 +365,7 @@ function togglePanel(id) {
 }
 
 // ── SAVE SCORE ──
-function saveScore(id) {
+async function saveScore(id) {
   const i1 = document.getElementById('i1-' + id);
   const i2 = document.getElementById('i2-' + id);
   const v1 = i1.value.trim(), v2 = i2.value.trim();
@@ -345,15 +374,15 @@ function saveScore(id) {
   if (v2 === '') { i2.classList.add('error'); ok = false; } else i2.classList.remove('error');
   if (!ok) return;
   scores[id] = { s1: v1, s2: v2 };
-  persist();
+  await persist(id);
   renderDisp(id);
   document.getElementById('panel-' + id).classList.remove('open');
 }
 
 // ── DELETE SCORE ──
-function delScore(id) {
+async function delScore(id) {
   delete scores[id];
-  persist();
+  await persist(id);
   renderDisp(id);
   document.getElementById('panel-' + id).classList.remove('open');
 }
@@ -395,10 +424,10 @@ document.addEventListener('click', e => {
 });
 
 // Enter to validate
-document.addEventListener('keydown', e => {
+document.addEventListener('keydown', async e => {
   if (e.key === 'Enter') {
     const open = document.querySelector('.score-panel.open');
-    if (open) saveScore(open.id.replace('panel-',''));
+    if (open) await saveScore(open.id.replace('panel-',''));
   }
 });
 </script>
