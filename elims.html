@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Trophée Paul Tavano U13M — 8 mai 2026</title>
+<title>⚡ Éliminatoires — Trophée Paul Tavano U13M</title>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -203,12 +203,13 @@
 
 <div class="hero">
   <span class="trophy-icon">🏆</span>
-  <h1>Trophée <span>Paul Tavano</span><br>U13 Masculin</h1>
-  <div class="date">📅 8 MAI 2026 · SALLE PAUL TAVANO</div>
+  <h1><span>Éliminatoires</span> · Quarts à Finale</h1>
+  <div class="sub">Trophée Paul Tavano · U13M · 8 mai 2026</div>
   <div style="margin-top:8px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
     <a href="/" style="color:#fbbf24;font-size:.72rem;font-weight:600;letter-spacing:.06em;text-decoration:none;background:rgba(251,191,36,.1);padding:5px 14px;border-radius:20px;border:1px solid rgba(251,191,36,.2);transition:all .15s">🏆 Bracket</a>
-    <a href="#classements" style="color:var(--accent);font-size:.72rem;font-weight:600;letter-spacing:.06em;text-decoration:none;background:rgba(112,132,255,.12);padding:5px 14px;border-radius:20px;border:1px solid rgba(112,132,255,.2);transition:all .15s">📊 Classements</a>
-    <a href="#eliminations" style="color:#a78bfa;font-size:.72rem;font-weight:600;letter-spacing:.06em;text-decoration:none;background:rgba(124,58,237,.12);padding:5px 14px;border-radius:20px;border:1px solid rgba(124,58,237,.2);transition:all .15s">⚡ Éliminations</a>
+    <a href="/poules.html" style="color:#22c55e;font-size:.72rem;font-weight:600;letter-spacing:.06em;text-decoration:none;background:rgba(34,197,94,.1);padding:5px 14px;border-radius:20px;border:1px solid rgba(34,197,94,.2);transition:all .15s">📜 Poules</a>
+    <a href="/elims.html" style="color:#a78bfa;font-size:.72rem;font-weight:600;letter-spacing:.06em;text-decoration:none;background:rgba(124,58,237,.12);padding:5px 14px;border-radius:20px;border:1px solid rgba(124,58,237,.2);transition:all .15s">⚡ Éliminatoires</a>
+    <a href="/stats.html" style="color:var(--accent);font-size:.72rem;font-weight:600;letter-spacing:.06em;text-decoration:none;background:rgba(112,132,255,.12);padding:5px 14px;border-radius:20px;border:1px solid rgba(112,132,255,.2);transition:all .15s">📊 Stats</a>
   </div>
 </div>
 
@@ -251,78 +252,6 @@
   </div>
 </div>
 
-<!-- ── CLASSEMENTS ── -->
-<div class="standings-wrap" id="classements"><div class="section-label">📊 Classements</div></div>
-<div class="cards" style="padding:0 12px;gap:16px">
-  <div id="standingsGroupes" style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
-    <div>
-      <div style="font-size:.7rem;font-weight:700;color:var(--tnt);letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px;padding-left:2px">Poule A</div>
-      <table class="standings-table"><thead><tr><th>Équipe</th><th>MJ</th><th>G</th><th>P</th><th>Pts</th></tr></thead><tbody id="standingsA"></tbody></table>
-    </div>
-    <div>
-      <div style="font-size:.7rem;font-weight:700;color:var(--accent);letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px;padding-left:2px">Poule B</div>
-      <table class="standings-table"><thead><tr><th>Équipe</th><th>MJ</th><th>G</th><th>P</th><th>Pts</th></tr></thead><tbody id="standingsB"></tbody></table>
-    </div>
-  </div>
-</div>
-
-<!-- ── TABLEAU ÉLIMINATOIRE ── -->
-<style>
-.bracket { max-width:680px; margin:18px auto 5px; padding:0 12px; }
-.bracket-round { margin-bottom:14px; }
-.bracket-title { font-family:'Syne',sans-serif; font-size:.65rem; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); margin-bottom:8px; padding-left:2px; }
-.bracket-title.elim-q { color:#a78bfa; }
-.bracket-title.elim-sf { color:#60a5fa; }
-.bracket-title.elim-f { color:var(--tnt); }
-
-.bracket-card { background:var(--surface); border-radius:10px; border:1px solid var(--border); padding:10px 12px; margin-bottom:6px; transition:border-color .2s; }
-.bracket-card.done { border-color:rgba(34,197,94,.3); }
-.bracket-card.won { border-color:rgba(249,115,22,.4); box-shadow:0 0 8px rgba(249,115,22,.15); }
-
-.bracket-meta { display:flex; justify-content:space-between; align-items:center; margin-bottom:5px; }
-.bracket-tag { font-size:.57rem; font-weight:600; letter-spacing:.06em; text-transform:uppercase; padding:2px 7px; border-radius:5px; background:rgba(124,58,237,.15); color:#a78bfa; }
-.bracket-tag.sf { background:rgba(96,165,250,.15); color:#60a5fa; }
-.bracket-tag.fin { background:rgba(249,115,22,.18); color:var(--tnt); }
-.bracket-lieu { font-size:.6rem; color:var(--muted); }
-
-.bracket-teams { display:flex; flex-direction:column; gap:3px; }
-.bracket-team { display:flex; align-items:center; gap:8px; padding:5px 8px; border-radius:7px; font-size:.82rem; font-weight:500; transition:all .2s; }
-.bracket-team .name { flex:1; }
-.bracket-team .scr { font-family:'JetBrains Mono',monospace; font-size:.85rem; font-weight:600; min-width:24px; text-align:center; }
-.bracket-team.winner { background:rgba(249,115,22,.1); border:1px solid rgba(249,115,22,.25); }
-.bracket-team.loser { opacity:.5; }
-.bracket-team.tnt   .scr { color:var(--tnt); }
-.bracket-team.tmb   .scr { color:var(--tmb); }
-.bracket-team.blois .scr { color:#22c55e; }
-.bracket-team.montrichard .scr { color:var(--montrichard); }
-.bracket-team.ces .scr { color:#fca5a5; }
-.bracket-team.azay .scr { color:#86efac; }
-.bracket-team.other .scr { color:var(--muted); }
-.bracket-team .adv { font-size:.65rem; color:#22c55e; font-weight:700; margin-left:auto; }
-
-.bracket-arrow { text-align:center; padding:2px 0 8px; font-size:.7rem; color:var(--muted); }
-.bracket-arrow span { display:inline-block; background:var(--surface); padding:2px 10px; border-radius:10px; border:1px solid var(--border); }
-
-.bracket-empty { text-align:center; padding:20px; color:var(--muted); font-size:.78rem; }
-.bracket-empty .eicon { font-size:1.5rem; display:block; margin-bottom:5px; }
-</style>
-
-<div class="section-wrap" style="margin-top:18px" id="bracketSection"><div class="section-label elim">🏆 Tableau éliminatoire</div></div>
-<div class="bracket" id="bracketContainer">
-  <div class="bracket-round" id="bracketQF">
-    <div class="bracket-title elim-q">⚡ Quarts de finale</div>
-    <div id="bracketQFInner"></div>
-  </div>
-  <div class="bracket-round" id="bracketSF">
-    <div class="bracket-title elim-sf">🔥 Demi-finales</div>
-    <div id="bracketSFInner"></div>
-  </div>
-  <div class="bracket-round" id="bracketFinal">
-    <div class="bracket-title elim-f">🏆 Finale & 3ᵉ place</div>
-    <div id="bracketFinalInner"></div>
-  </div>
-</div>
-
 <!-- ── ÉLIMINATIONS ── -->
 <div class="section-wrap" style="margin-top:18px" id="eliminations"><div class="section-label elim">⚡ Phase éliminatoire — Sélection des équipes</div></div>
 <div class="elim-sel-wrap" id="elimContainer"></div>
@@ -331,24 +260,11 @@
 // ── DATA ──
 const MATCHES = [
   // id, heure, terrain, phase, poule, tag, t1, c1, t2, c2, teamKeys
-  {id:'1',  time:'09:15', terrain:'Salle Paul Tavano',   phase:'groupes', poule:'b', tag:'Poule B',          t1:'TNT2',              c1:'tnt',   t2:'Montrichard',          c2:'montrichard', cardClass:'tnt',   teams:'tnt2 montrichard'},
-  {id:'2',  time:'09:35', terrain:'Salle Paul Tavano',   phase:'groupes', poule:'a', tag:'Poule A',          t1:'ADA Blois',         c1:'blois', t2:'Azay Cheillé',         c2:'azay', cardClass:'blois', teams:'ada blois azay cheille'},
-  {id:'3',  time:'09:55', terrain:'Salle Paul Tavano',   phase:'groupes', poule:'b', tag:'Poule B',          t1:'Tours MB',          c1:'tmb',   t2:'CRA Basket',           c2:'other', cardClass:'tmb',   teams:'tours mb cra basket'},
-  {id:'4',  time:'10:15', terrain:'Salle Paul Tavano',   phase:'groupes', poule:'a', tag:'Poule A',          t1:'TNT1',              c1:'tnt',   t2:'ADA Blois',            c2:'blois', cardClass:'tnt',   teams:'tnt1 ada blois'},
-  {id:'5',  time:'10:35', terrain:'Salle Paul Tavano',   phase:'groupes', poule:'b', tag:'Poule B',          t1:'CRA Basket',        c1:'other', t2:'TNT2',                 c2:'tnt',   cardClass:'tnt',   teams:'cra basket tnt2'},
-  {id:'6',  time:'10:55', terrain:'Salle Paul Tavano',   phase:'groupes', poule:'a', tag:'Poule A',          t1:'Azay Cheillé',      c1:'azay', t2:'CES Tours',            c2:'ces', cardClass:'ces', teams:'azay cheille ces tours'},
-  {id:'7',  time:'11:15', terrain:'Salle Paul Tavano',   phase:'groupes', poule:'b', tag:'Poule B',          t1:'Tours MB',          c1:'tmb',   t2:'Montrichard',          c2:'montrichard', cardClass:'tmb',   teams:'tours mb montrichard'},
-  {id:'8',  time:'11:35', terrain:'Salle Paul Tavano',   phase:'groupes', poule:'a', tag:'Poule A',          t1:'CES Tours',         c1:'ces', t2:'TNT1',                 c2:'tnt',   cardClass:'tnt',   teams:'ces tours tnt1'},
-  {id:'9',  time:'11:55', terrain:'Salle Paul Tavano',   phase:'groupes', poule:'b', tag:'Poule B',          t1:'Montrichard',       c1:'montrichard', t2:'CRA Basket',           c2:'other', cardClass:'montrichard', teams:'montrichard cra basket'},
-  {id:'10', time:'13:15', terrain:'Salle Paul Tavano',   phase:'groupes', poule:'a', tag:'Poule A',          t1:'TNT1',              c1:'tnt',   t2:'Azay Cheillé',         c2:'azay', cardClass:'tnt',   teams:'tnt1 azay cheille'},
-  {id:'11', time:'13:35', terrain:'Salle Paul Tavano',   phase:'groupes', poule:'b', tag:'Poule B',          t1:'TNT2',              c1:'tnt',   t2:'Tours MB',          c2:'tmb', cardClass:'tnt',   teams:'tnt2 tours mb'},
-  {id:'12', time:'13:55', terrain:'Salle Paul Tavano',   phase:'groupes', poule:'a', tag:'Poule A',          t1:'ADA Blois',         c1:'blois', t2:'CES Tours',            c2:'ces', cardClass:'blois', teams:'ada blois ces tours'},
-  // élim
   {id:'13', time:'14:15', terrain:'Petite salle',        phase:'elim', poule:'', tag:'3ème 1/4 F',           t1:'Tours MB',           c1:'tmb',   t2:'CES Tours',            c2:'ces', cardClass:'elim', teams:'tours mb ces tours'},
   {id:'14', time:'14:20', terrain:'Salle Paul Tavano',   phase:'elim', poule:'', tag:'1er 1/4 F',            t1:'ADA Blois',          c1:'blois', t2:'CRA Basket',           c2:'other', cardClass:'elim', teams:'ada blois cra basket'},
   {id:'15', time:'14:35', terrain:'Petite salle',        phase:'elim', poule:'', tag:'4ème 1/4 F',           t1:'TNT2',               c1:'tnt',   t2:'Azay Cheillé',         c2:'azay', cardClass:'elim', teams:'tnt2 azay cheille'},
   {id:'16', time:'14:40', terrain:'Salle Paul Tavano',   phase:'elim', poule:'', tag:'2ème 1/4 F',           t1:'TNT1',               c1:'tnt',   t2:'Montrichard',          c2:'montrichard', cardClass:'elim', teams:'tnt1 montrichard'},
-  {id:'17', time:'15:15', terrain:'Salle Paul Tavano',   phase:'elim', poule:'', tag:'1ère 1/2 F',           t1:'TNT1',                 c1:'tnt',   t2:'Tours MB',                 c2:'tmb', cardClass:'elim', teams:'tnt1 tours mb'},
+  {id:'17', time:'15:15', terrain:'Salle Paul Tavano',   phase:'elim', poule:'', tag:'1ère 1/2 F',           t1:'Tours MB',           c1:'tmb',   t2:'TNT1',                 c2:'tnt', cardClass:'elim', teams:'tours mb tnt1'},
   {id:'18', time:'15:45', terrain:'Salle Paul Tavano',   phase:'elim', poule:'', tag:'2ème 1/2 F',           t1:'ADA Blois',          c1:'blois', t2:'TNT2',                 c2:'tnt', cardClass:'elim', teams:'ada blois tnt2'},
   {id:'19', time:'15:25', terrain:'Aire Pierrot Vérité', phase:'elim', poule:'', tag:'Match 3ème place',     t1:'Perdant 1ère 1/2 F',c1:'other', t2:'Perdant 2ème 1/2 F',  c2:'other', cardClass:'elim', teams:'perdant 1ere 2eme 1/2 f'},
   {id:'20', time:'15:30', terrain:'Salle Paul Tavano',   phase:'elim', poule:'', tag:'🏆 FINALE U13M',       t1:'Gagnant 1ère 1/2 F',c1:'other', t2:'Gagnant 2ème 1/2 F',  c2:'other', cardClass:'elim finale', teams:'gagnant 1ere 2eme 1/2 f finale'},
