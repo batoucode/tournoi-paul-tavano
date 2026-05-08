@@ -537,7 +537,7 @@ function computeStandings(pouleTeams) {
     : MATCHES.filter(m => m.phase === 'groupes' && m.poule === (pouleTeams === POULE_A_TEAMS ? 'a' : 'b')).map(m => m.id);
 
   matchIds.forEach(id => {
-    const m = MATCHES.find(x => x.id === id);
+    const m = MATCHES.find(x => String(x.id) === String(id));
     if (!m) return;
     const s = scores[id];
     if (!s || !s.s1 || !s.s2) return;
