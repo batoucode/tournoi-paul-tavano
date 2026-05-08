@@ -15,6 +15,7 @@
     --tnt: #F97316;
     --tmb: #ef4444;
     --blois: #22c55e;
+    --montrichard: #EAB308;
     --accent: #7084FF;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -35,6 +36,7 @@
   .dot-tnt   { background:var(--tnt);   box-shadow:0 0 6px rgba(249,115,22,.7); }
   .dot-tmb   { background:var(--tmb);   box-shadow:0 0 6px rgba(239,68,68,.7); }
   .dot-blois { background:var(--blois); box-shadow:0 0 6px rgba(34,197,94,.7); }
+  .dot-montrichard { background:var(--montrichard); box-shadow:0 0 6px rgba(234,179,8,.7); }
   .dot-other { background:var(--muted); }
 
   /* SEARCH */
@@ -55,6 +57,7 @@
   .pill-tnt.active    { background:var(--tnt); }
   .pill-tmb.active    { background:var(--tmb); }
   .pill-blois.active  { background:var(--blois); }
+  .pill-montrichard.active { background:var(--montrichard); }
   .pill-groupes.active{ background:#334155; border-color:#475569; }
   .pill-elim.active   { background:#7c3aed; }
 
@@ -75,6 +78,7 @@
   .card.tnt   .card-accent { background:var(--tnt);   box-shadow:0 0 8px rgba(249,115,22,.5); }
   .card.tmb   .card-accent { background:var(--tmb);   box-shadow:0 0 8px rgba(239,68,68,.5); }
   .card.blois .card-accent { background:var(--blois); box-shadow:0 0 8px rgba(34,197,94,.5); }
+  .card.montrichard .card-accent { background:var(--montrichard); box-shadow:0 0 8px rgba(234,179,8,.5); }
   .card.other .card-accent { background:var(--muted); }
   .card.elim  .card-accent { background:linear-gradient(90deg,#7c3aed,var(--accent)); }
 
@@ -92,6 +96,7 @@
   .team.tnt   { background:rgba(249,115,22,.15); color:var(--tnt);   border:1px solid rgba(249,115,22,.3); }
   .team.tmb   { background:rgba(239,68,68,.15);  color:var(--tmb);   border:1px solid rgba(239,68,68,.3); }
   .team.blois { background:rgba(34,197,94,.15);  color:var(--blois); border:1px solid rgba(34,197,94,.3); }
+  .team.montrichard { background:rgba(234,179,8,.15); color:var(--montrichard); border:1px solid rgba(234,179,8,.3); }
   .team.other { background:rgba(255,255,255,.05); color:var(--text);  border:1px solid var(--border); }
   .vs { font-size:.68rem; color:var(--muted); font-weight:700; flex-shrink:0; }
 
@@ -102,6 +107,7 @@
   .score-box.tnt   { background:rgba(249,115,22,.2); color:var(--tnt); }
   .score-box.tmb   { background:rgba(239,68,68,.2);  color:var(--tmb); }
   .score-box.blois { background:rgba(34,197,94,.2);  color:var(--blois); }
+  .score-box.montrichard { background:rgba(234,179,8,.2); color:var(--montrichard); }
   .score-box.empty { color:var(--muted); font-size:.75rem; }
   .score-box.winner { box-shadow:0 0 0 2px currentColor; font-weight:700; }
   .edit-btn { font-size:.62rem; color:var(--accent); font-weight:600; text-align:right; letter-spacing:.02em; }
@@ -119,6 +125,7 @@
   .score-team-label.tnt   { color:var(--tnt); }
   .score-team-label.tmb   { color:var(--tmb); }
   .score-team-label.blois { color:var(--blois); }
+  .score-team-label.montrichard { color:var(--montrichard); }
   .score-team-label.other { color:var(--text); }
 
   .score-input { width:100%; background:rgba(255,255,255,.06); border:1.5px solid rgba(255,255,255,.12); border-radius:10px; padding:12px 8px; color:#fff; font-family:'JetBrains Mono',monospace; font-size:1.5rem; font-weight:500; text-align:center; outline:none; transition:border-color .2s,box-shadow .2s; -moz-appearance:textfield; appearance:textfield; }
@@ -127,6 +134,7 @@
   .score-input.tnt:focus   { border-color:var(--tnt);   box-shadow:0 0 0 3px rgba(249,115,22,.2); }
   .score-input.tmb:focus   { border-color:var(--tmb);   box-shadow:0 0 0 3px rgba(239,68,68,.2); }
   .score-input.blois:focus { border-color:var(--blois); box-shadow:0 0 0 3px rgba(34,197,94,.2); }
+  .score-input.montrichard:focus { border-color:var(--montrichard); box-shadow:0 0 0 3px rgba(234,179,8,.2); }
   .score-input.error { border-color:#ef4444 !important; }
 
   .vs-sep { font-family:'Syne',sans-serif; font-size:1.1rem; font-weight:800; color:var(--muted); flex-shrink:0; padding-bottom:14px; }
@@ -155,6 +163,7 @@
   <div class="legend-item"><div class="dot dot-tnt"></div>TNT</div>
   <div class="legend-item"><div class="dot dot-tmb"></div>Tours MB</div>
   <div class="legend-item"><div class="dot dot-blois"></div>ADA Blois</div>
+  <div class="legend-item"><div class="dot dot-montrichard"></div>Montrichard</div>
   <div class="legend-item"><div class="dot dot-other"></div>Autres</div>
 </div>
 
@@ -171,6 +180,7 @@
   <button class="pill pill-tnt"         onclick="setPill('tnt',this)">🟠 TNT</button>
   <button class="pill pill-tmb"         onclick="setPill('tmb',this)">🔴 Tours MB</button>
   <button class="pill pill-blois"       onclick="setPill('blois',this)">🟢 ADA Blois</button>
+  <button class="pill pill-montrichard"  onclick="setPill('montrichard',this)">🟡 Montrichard</button>
   <button class="pill pill-groupes"     onclick="setPill('groupes',this)">Phase de groupes</button>
   <button class="pill pill-elim"        onclick="setPill('elim',this)">⚡ Élim.</button>
 </div>
@@ -188,15 +198,15 @@
 // ── DATA ──
 const MATCHES = [
   // id, heure, terrain, phase, poule, tag, t1, c1, t2, c2, teamKeys
-  {id:'1',  time:'09:15', terrain:'Salle Paul Tavano',   phase:'groupes', poule:'b', tag:'Poule B',          t1:'TNT2',              c1:'tnt',   t2:'Montrichard',          c2:'other', cardClass:'tnt',   teams:'tnt2 montrichard'},
+  {id:'1',  time:'09:15', terrain:'Salle Paul Tavano',   phase:'groupes', poule:'b', tag:'Poule B',          t1:'TNT2',              c1:'tnt',   t2:'Montrichard',          c2:'montrichard', cardClass:'tnt',   teams:'tnt2 montrichard'},
   {id:'2',  time:'09:35', terrain:'Salle Paul Tavano',   phase:'groupes', poule:'a', tag:'Poule A',          t1:'ADA Blois',         c1:'blois', t2:'Azay Cheillé',         c2:'other', cardClass:'blois', teams:'ada blois azay cheille'},
   {id:'3',  time:'09:55', terrain:'Salle Paul Tavano',   phase:'groupes', poule:'b', tag:'Poule B',          t1:'Tours MB',          c1:'tmb',   t2:'CRA Basket',           c2:'other', cardClass:'tmb',   teams:'tours mb cra basket'},
   {id:'4',  time:'10:15', terrain:'Salle Paul Tavano',   phase:'groupes', poule:'a', tag:'Poule A',          t1:'TNT1',              c1:'tnt',   t2:'ADA Blois',            c2:'blois', cardClass:'tnt',   teams:'tnt1 ada blois'},
   {id:'5',  time:'10:35', terrain:'Salle Paul Tavano',   phase:'groupes', poule:'b', tag:'Poule B',          t1:'CRA Basket',        c1:'other', t2:'TNT2',                 c2:'tnt',   cardClass:'tnt',   teams:'cra basket tnt2'},
   {id:'6',  time:'10:55', terrain:'Salle Paul Tavano',   phase:'groupes', poule:'a', tag:'Poule A',          t1:'Azay Cheillé',      c1:'other', t2:'CES Tours',            c2:'other', cardClass:'other', teams:'azay cheille ces tours'},
-  {id:'7',  time:'11:15', terrain:'Salle Paul Tavano',   phase:'groupes', poule:'b', tag:'Poule B',          t1:'Tours MB',          c1:'tmb',   t2:'Montrichard',          c2:'other', cardClass:'tmb',   teams:'tours mb montrichard'},
+  {id:'7',  time:'11:15', terrain:'Salle Paul Tavano',   phase:'groupes', poule:'b', tag:'Poule B',          t1:'Tours MB',          c1:'tmb',   t2:'Montrichard',          c2:'montrichard', cardClass:'tmb',   teams:'tours mb montrichard'},
   {id:'8',  time:'11:35', terrain:'Salle Paul Tavano',   phase:'groupes', poule:'a', tag:'Poule A',          t1:'CES Tours',         c1:'other', t2:'TNT1',                 c2:'tnt',   cardClass:'tnt',   teams:'ces tours tnt1'},
-  {id:'9',  time:'11:55', terrain:'Salle Paul Tavano',   phase:'groupes', poule:'b', tag:'Poule B',          t1:'Montrichard',       c1:'other', t2:'CRA Basket',           c2:'other', cardClass:'other', teams:'montrichard cra basket'},
+  {id:'9',  time:'11:55', terrain:'Salle Paul Tavano',   phase:'groupes', poule:'b', tag:'Poule B',          t1:'Montrichard',       c1:'montrichard', t2:'CRA Basket',           c2:'other', cardClass:'montrichard', teams:'montrichard cra basket'},
   {id:'10', time:'13:15', terrain:'Salle Paul Tavano',   phase:'groupes', poule:'a', tag:'Poule A',          t1:'TNT1',              c1:'tnt',   t2:'Azay Cheillé',         c2:'other', cardClass:'tnt',   teams:'tnt1 azay cheille'},
   {id:'11', time:'13:35', terrain:'Salle Paul Tavano',   phase:'groupes', poule:'b', tag:'Poule B',          t1:'TNT2',              c1:'tnt',   t2:'CES Tours',            c2:'other', cardClass:'tnt',   teams:'tnt2 ces tours'},
   {id:'12', time:'13:55', terrain:'Salle Paul Tavano',   phase:'groupes', poule:'a', tag:'Poule A',          t1:'ADA Blois',         c1:'blois', t2:'CES Tours',            c2:'other', cardClass:'blois', teams:'ada blois ces tours'},
@@ -407,6 +417,7 @@ function filterAll() {
     if (activePill === 'tnt')     mP = m.teams.includes('tnt');
     if (activePill === 'tmb')     mP = m.teams.includes('tours mb');
     if (activePill === 'blois')   mP = m.teams.includes('blois') || m.teams.includes('ada');
+    if (activePill === 'montrichard') mP = m.teams.includes('montrichard');
     if (activePill === 'groupes') mP = m.phase === 'groupes';
     if (activePill === 'elim')    mP = m.phase === 'elim';
     if (mS && mP) { card.style.display = ''; visible++; }
