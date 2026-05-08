@@ -205,6 +205,10 @@
   <span class="trophy-icon">🏆</span>
   <h1>Trophée <span>Paul Tavano</span><br>U13 Masculin</h1>
   <div class="date">📅 8 MAI 2026 · SALLE PAUL TAVANO</div>
+  <div style="margin-top:8px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+    <a href="#classements" style="color:var(--accent);font-size:.72rem;font-weight:600;letter-spacing:.06em;text-decoration:none;background:rgba(112,132,255,.12);padding:5px 14px;border-radius:20px;border:1px solid rgba(112,132,255,.2);transition:all .15s">📊 Classements</a>
+    <a href="#eliminations" style="color:#a78bfa;font-size:.72rem;font-weight:600;letter-spacing:.06em;text-decoration:none;background:rgba(124,58,237,.12);padding:5px 14px;border-radius:20px;border:1px solid rgba(124,58,237,.2);transition:all .15s">⚡ Éliminations</a>
+  </div>
 </div>
 
 <div class="legend">
@@ -247,7 +251,7 @@
 </div>
 
 <!-- ── CLASSEMENTS ── -->
-<div class="standings-wrap"><div class="section-label">📊 Classements</div></div>
+<div class="standings-wrap" id="classements"><div class="section-label">📊 Classements</div></div>
 <div class="cards" style="padding:0 12px;gap:16px">
   <div id="standingsGroupes" style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
     <div>
@@ -262,7 +266,7 @@
 </div>
 
 <!-- ── ÉLIMINATIONS ── -->
-<div class="section-wrap" style="margin-top:18px"><div class="section-label elim">⚡ Phase éliminatoire — Sélection des équipes</div></div>
+<div class="section-wrap" style="margin-top:18px" id="eliminations"><div class="section-label elim">⚡ Phase éliminatoire — Sélection des équipes</div></div>
 <div class="elim-sel-wrap" id="elimContainer"></div>
 
 <script>
