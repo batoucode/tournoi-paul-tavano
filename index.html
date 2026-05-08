@@ -165,6 +165,38 @@
   .no-results { text-align:center; padding:40px 20px; color:var(--muted); font-size:.9rem; }
   .no-results .emoji { font-size:2rem; display:block; margin-bottom:8px; }
   .hidden { display:none !important; }
+
+  /* ── CLASSEMENTS ── */
+  .standings-wrap { max-width:680px; margin:20px auto 5px; padding:0 12px; }
+  .standings-table { width:100%; border-collapse:collapse; background:var(--surface); border-radius:12px; overflow:hidden; border:1px solid var(--border); }
+  .standings-table th { font-family:'Syne',sans-serif; font-size:.65rem; font-weight:700; letter-spacing:.1em; text-transform:uppercase; padding:10px 8px; background:rgba(255,255,255,.04); color:var(--muted); text-align:center; }
+  .standings-table th:first-child { text-align:left; padding-left:14px; }
+  .standings-table td { padding:9px 8px; font-size:.82rem; text-align:center; border-top:1px solid var(--border); }
+  .standings-table td:first-child { text-align:left; padding-left:14px; font-weight:600; }
+  .standings-table .rank-num { display:inline-block; width:20px; height:20px; line-height:20px; border-radius:50%; font-size:.7rem; font-weight:700; text-align:center; background:rgba(255,255,255,.06); margin-right:6px; }
+  .standings-table .rank-1 { color:var(--tnt); }
+  .standings-table .rank-2 { color:var(--montrichard); }
+  .standings-table .pts { font-weight:700; font-family:'JetBrains Mono',monospace; color:#fff; }
+
+  /* ── ÉLIMINATIONS ── */
+  .elim-sel-wrap { max-width:680px; margin:15px auto 5px; padding:0 12px; }
+  .elim-card { background:var(--surface); border-radius:12px; border:1px solid var(--border); padding:12px 14px; margin-bottom:8px; }
+  .elim-card.finale { border-color:rgba(249,115,22,.3); }
+  .elim-header { font-size:.7rem; font-weight:700; color:var(--muted); letter-spacing:.06em; text-transform:uppercase; margin-bottom:7px; }
+  .elim-header.finale { color:var(--tnt); }
+  .elim-row { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+  .elim-row select { flex:1; min-width:100px; background:rgba(255,255,255,.06); border:1.5px solid var(--border); border-radius:8px; padding:8px 10px; color:#fff; font-family:'DM Sans',sans-serif; font-size:.82rem; font-weight:500; outline:none; transition:border-color .15s; cursor:pointer; }
+  .elim-row select:focus { border-color:var(--accent); }
+  .elim-row select option { background:#1a1f2e; color:#fff; }
+  .elim-vs { font-family:'Syne',sans-serif; font-size:.8rem; font-weight:800; color:var(--muted); flex-shrink:0; }
+  .elim-saved { font-size:.6rem; color:#22c55e; font-weight:600; letter-spacing:.04em; flex-shrink:0; }
+
+  /* ── RESPONSIVE ── */
+  @media(max-width:500px) {
+    #standingsGroupes { grid-template-columns:1fr !important; }
+    .standings-table th,.standings-table td { font-size:.72rem; padding:7px 5px; }
+    .elim-row select { font-size:.75rem; padding:6px 8px; min-width:70px; }
+  }
 </style>
 </head>
 <body>
@@ -214,6 +246,25 @@
   </div>
 </div>
 
+<!-- ── CLASSEMENTS ── -->
+<div class="standings-wrap"><div class="section-label">📊 Classements</div></div>
+<div class="cards" style="padding:0 12px;gap:16px">
+  <div id="standingsGroupes" style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+    <div>
+      <div style="font-size:.7rem;font-weight:700;color:var(--tnt);letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px;padding-left:2px">Poule A</div>
+      <table class="standings-table"><thead><tr><th>Équipe</th><th>MJ</th><th>G</th><th>P</th><th>Pts</th></tr></thead><tbody id="standingsA"></tbody></table>
+    </div>
+    <div>
+      <div style="font-size:.7rem;font-weight:700;color:var(--accent);letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px;padding-left:2px">Poule B</div>
+      <table class="standings-table"><thead><tr><th>Équipe</th><th>MJ</th><th>G</th><th>P</th><th>Pts</th></tr></thead><tbody id="standingsB"></tbody></table>
+    </div>
+  </div>
+</div>
+
+<!-- ── ÉLIMINATIONS ── -->
+<div class="section-wrap" style="margin-top:18px"><div class="section-label elim">⚡ Phase éliminatoire — Sélection des équipes</div></div>
+<div class="elim-sel-wrap" id="elimContainer"></div>
+
 <script>
 // ── DATA ──
 const MATCHES = [
@@ -243,6 +294,7 @@ const MATCHES = [
 
 // ── STORAGE (Google Sheets via API) ──
 let scores = {};
+let eliminations = {};
 let loadingPromise = null;
 
 async function loadScores() {
@@ -251,11 +303,14 @@ async function loadScores() {
     const data = await resp.json();
     if (data.success) {
       scores = data.scores || {};
+      eliminations = data.eliminations || {};
     }
   } catch(e) {
     console.warn('Impossible de charger les scores:', e);
   }
   MATCHES.forEach(m => renderDisp(m.id, m.c1, m.c2));
+  renderStandings();
+  renderElimSelectors();
 }
 loadingPromise = loadScores();
 
@@ -271,8 +326,28 @@ async function persist(id) {
         score2: s ? s.s2 : ''
       })
     });
+    renderStandings();
   } catch(e) {
     console.warn('Erreur sauvegarde:', e);
+  }
+}
+
+async function saveElim(matchId) {
+  const sel1 = document.getElementById('elim-t1-' + matchId);
+  const sel2 = document.getElementById('elim-t2-' + matchId);
+  const team1 = sel1.value;
+  const team2 = sel2.value;
+  eliminations[matchId] = { team1, team2 };
+  try {
+    await fetch('/api/score', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ type: 'elimination', match_id: matchId, team1, team2 })
+    });
+    const saved = document.getElementById('elim-saved-' + matchId);
+    if (saved) saved.textContent = '✓ sauvegardé';
+  } catch(e) {
+    console.warn('Erreur sauvegarde élimination:', e);
   }
 }
 
@@ -449,7 +524,108 @@ function filterAll() {
   document.getElementById('noResults').classList.toggle('hidden', visible > 0);
 }
 
-// Close panel on outside tap
+// ── CLASSEMENTS ──
+const POULE_A_TEAMS = { 'TNT1':'tnt', 'ADA Blois':'blois', 'CES Tours':'ces', 'Azay Cheillé':'azay' };
+const POULE_B_TEAMS = { 'TNT2':'tnt', 'Tours MB':'tmb', 'Montrichard':'montrichard', 'CRA Basket':'other' };
+
+function computeStandings(pouleTeams) {
+  const teams = {};
+  Object.keys(pouleTeams).forEach(name => { teams[name] = { name, mj:0, g:0, p:0, pts:0, color: pouleTeams[name] }; });
+  
+  const matchIds = Object.keys(pouleTeams).length === 4
+    ? [1,2,3,4,5,6,7,8,9,10,11,12] // both poules
+    : MATCHES.filter(m => m.phase === 'groupes' && m.poule === (pouleTeams === POULE_A_TEAMS ? 'a' : 'b')).map(m => m.id);
+
+  matchIds.forEach(id => {
+    const m = MATCHES.find(x => x.id === id);
+    if (!m) return;
+    const s = scores[id];
+    if (!s || !s.s1 || !s.s2) return;
+    const n1 = parseInt(s.s1), n2 = parseInt(s.s2);
+    if (isNaN(n1) || isNaN(n2)) return;
+    
+    if (teams[m.t1]) {
+      teams[m.t1].mj++;
+      if (n1 > n2) { teams[m.t1].g++; teams[m.t1].pts += 2; }
+      else { teams[m.t1].p++; teams[m.t1].pts += 1; }
+    }
+    if (teams[m.t2]) {
+      teams[m.t2].mj++;
+      if (n2 > n1) { teams[m.t2].g++; teams[m.t2].pts += 2; }
+      else { teams[m.t2].p++; teams[m.t2].pts += 1; }
+    }
+  });
+  
+  return Object.values(teams).sort((a, b) => b.pts - a.pts || b.g - a.g);
+}
+
+function renderStandings() {
+  const stdA = computeStandings(POULE_A_TEAMS);
+  const stdB = computeStandings(POULE_B_TEAMS);
+  
+  ['A', 'B'].forEach(p => {
+    const tbody = document.getElementById('standings' + p);
+    const data = p === 'A' ? stdA : stdB;
+    tbody.innerHTML = data.map((t, i) => {
+      const rankColor = i < 2 ? `rank-${i+1}` : '';
+      return `<tr>
+        <td><span class="rank-num ${rankColor}">${i+1}</span><span class="team ${t.color}" style="padding:2px 7px;font-size:.78rem">${t.name}</span></td>
+        <td>${t.mj}</td>
+        <td style="color:#22c55e;font-weight:600">${t.g}</td>
+        <td style="color:#ef4444;font-weight:600">${t.p}</td>
+        <td class="pts">${t.pts}</td>
+      </tr>`;
+    }).join('');
+  });
+}
+
+// ── ÉLIMINATIONS ──
+const ELIM_MATCHES = [
+  {id:'13', tag:'3ᵉ 1/4 F', terrain:'Salle Paul Tavano'},
+  {id:'14', tag:'1ᵉʳ 1/4 F', terrain:'Aire Pierrot Vérité'},
+  {id:'15', tag:'4ᵉ 1/4 F', terrain:'Salle Paul Tavano'},
+  {id:'16', tag:'2ᵉ 1/4 F', terrain:'Aire Pierrot Vérité'},
+  {id:'17', tag:'1ʳᵉ 1/2 F', terrain:'Salle Paul Tavano'},
+  {id:'18', tag:'2ᵉ 1/2 F', terrain:'Aire Pierrot Vérité'},
+  {id:'19', tag:'🥉 3ᵉ place', terrain:'Aire Pierrot Vérité'},
+  {id:'20', tag:'🏆 FINALE', terrain:'Salle Paul Tavano'},
+];
+
+function getAllTeams() {
+  const all = {};
+  Object.keys(POULE_A_TEAMS).forEach(n => { all[n] = POULE_A_TEAMS[n]; });
+  Object.keys(POULE_B_TEAMS).forEach(n => { all[n] = POULE_B_TEAMS[n]; });
+  return all;
+}
+
+function renderElimSelectors() {
+  const container = document.getElementById('elimContainer');
+  if (!container) return;
+  const allTeams = getAllTeams();
+  
+  container.innerHTML = ELIM_MATCHES.map(m => {
+    const isFinale = m.id === '20';
+    const saved = eliminations[m.id] || {};
+    
+    const options = Object.keys(allTeams).map(name => 
+      `<option value="${name}" ${saved.team1 === name ? 'selected' : ''}>${name}</option>`
+    ).join('');
+    
+    const options2 = Object.keys(allTeams).map(name => 
+      `<option value="${name}" ${saved.team2 === name ? 'selected' : ''}>${name}</option>`
+    ).join('');
+    
+    return `<div class="elim-card ${isFinale ? 'finale' : ''}">
+      <div class="elim-header ${isFinale ? 'finale' : ''}">${m.tag} · ${isFinale ? '⭐' : ''} ${m.terrain}</div>
+      <div class="elim-row">
+        <select id="elim-t1-${m.id}" onchange="saveElim('${m.id}')">${options}</select>
+        <span class="elim-vs">VS</span>
+        <select id="elim-t2-${m.id}" onchange="saveElim('${m.id}')">${options2}</select>
+        <span class="elim-saved" id="elim-saved-${m.id}">${saved.team1 ? '✓ sauvegardé' : ''}</span>
+      </div>
+    </div>`;
+  }).join('');
+}
 document.addEventListener('click', e => {
   if (!e.target.closest('.card')) {
     document.querySelectorAll('.score-panel.open').forEach(p => p.classList.remove('open'));

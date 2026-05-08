@@ -1,14 +1,12 @@
 /**
  * Vercel Serverless Function — Proxy vers Google Sheets
  * 
- * GET /api/score → renvoie tous les scores du tournoi
- * POST /api/score → enregistre un score (body: { match_id, score1, score2 })
+ * GET /api/score → scores + éliminations
+ * POST /api/score → enregistre un score (match_id, score1, score2)
+ * POST /api/elimination → enregistre une sélection élimination (match_id, team1, team2)
  */
 
 const SHEET_ID = "188QYWII-cW_R-q3Cs12A33D2lqcdrCkcIPPAG80MJ9o";
-const SHEET_RANGE = "Scores!A1:C21";
-
-// Ces variables d'environnement sont définies dans Vercel
 const CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
 const CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET;
 const REFRESH_TOKEN = process.env.GOOGLE_REFRESH_TOKEN;
@@ -18,10 +16,8 @@ async function getAccessToken() {
     method: "POST",
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
     body: new URLSearchParams({
-      client_id: CLIENT_ID,
-      client_secret: CLIENT_SECRET,
-      refresh_token: REFRESH_TOKEN,
-      grant_type: "refresh_token",
+      client_id: CLIENT_ID, client_secret: CLIENT_SECRET,
+      refresh_token: REFRESH_TOKEN, grant_type: "refresh_token",
     }),
   });
   const data = await resp.json();
@@ -29,86 +25,88 @@ async function getAccessToken() {
   return data.access_token;
 }
 
-async function readScores(accessToken) {
-  const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${SHEET_RANGE}`;
-  const resp = await fetch(url, {
-    headers: { Authorization: `Bearer ${accessToken}` },
-  });
+async function readSheet(accessToken, range) {
+  const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${range}`;
+  const resp = await fetch(url, { headers: { Authorization: `Bearer ${accessToken}` } });
   const data = await resp.json();
   if (!resp.ok) throw new Error(`Sheets API: ${data.error?.message || resp.status}`);
-
-  const rows = data.values || [];
-  const scores = {};
-  for (let i = 1; i < rows.length; i++) {
-    const [matchId, s1, s2] = rows[i];
-    if (s1 || s2) {
-      scores[matchId] = { s1: s1 || "", s2: s2 || "" };
-    }
-  }
-  return scores;
+  return data.values || [];
 }
 
-async function writeScore(accessToken, matchId, score1, score2) {
-  // Trouver la ligne du match
-  const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${SHEET_RANGE}`;
+async function writeCell(accessToken, range, values) {
+  const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${range}?valueInputOption=RAW`;
   const resp = await fetch(url, {
-    headers: { Authorization: `Bearer ${accessToken}` },
+    method: "PUT",
+    headers: { Authorization: `Bearer ${accessToken}`, "Content-Type": "application/json" },
+    body: JSON.stringify({ values }),
   });
   const data = await resp.json();
-  if (!resp.ok) throw new Error(`Sheets API: ${data.error?.message || resp.status}`);
-
-  const rows = data.values || [];
-  let rowIndex = -1;
-  for (let i = 1; i < rows.length; i++) {
-    if (String(rows[i][0]) === String(matchId)) {
-      rowIndex = i + 1; // 1-indexed
-      break;
-    }
-  }
-  if (rowIndex === -1) throw new Error(`Match ${matchId} not found`);
-
-  // Mettre à jour
-  const updateUrl = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/Scores!B${rowIndex}:C${rowIndex}?valueInputOption=RAW`;
-  const updateResp = await fetch(updateUrl, {
-    method: "PUT",
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      values: [[score1 || "", score2 || ""]],
-    }),
-  });
-  const updateData = await updateResp.json();
-  if (!updateResp.ok) throw new Error(`Sheet update: ${updateData.error?.message || updateResp.status}`);
-  return { matchId, score1, score2 };
+  if (!resp.ok) throw new Error(`Sheet update: ${data.error?.message || resp.status}`);
+  return data;
 }
 
 export default async function handler(req, res) {
-  // CORS headers
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
 
-  if (req.method === "OPTIONS") {
-    return res.status(200).end();
-  }
+  if (req.method === "OPTIONS") return res.status(200).end();
 
   try {
     const accessToken = await getAccessToken();
 
     if (req.method === "GET") {
-      const scores = await readScores(accessToken);
-      return res.status(200).json({ success: true, scores });
+      const [scoreRows, elimRows] = await Promise.all([
+        readSheet(accessToken, "Scores!A1:C21"),
+        readSheet(accessToken, "Eliminations!A1:C20"),
+      ]);
+
+      const scores = {};
+      for (let i = 1; i < scoreRows.length; i++) {
+        const [id, s1, s2] = scoreRows[i];
+        if (s1 || s2) scores[id] = { s1: s1 || "", s2: s2 || "" };
+      }
+
+      const eliminations = {};
+      for (let i = 1; i < elimRows.length; i++) {
+        const [id, t1, t2] = elimRows[i];
+        eliminations[id] = { team1: t1 || "", team2: t2 || "" };
+      }
+
+      return res.status(200).json({ success: true, scores, eliminations });
     }
 
     if (req.method === "POST") {
       const { match_id, score1, score2 } = req.body;
-      if (!match_id) {
-        return res.status(400).json({ success: false, error: "match_id is required" });
+      if (!match_id) return res.status(400).json({ success: false, error: "match_id required" });
+
+      const rows = await readSheet(accessToken, "Scores!A1:C21");
+      let rowIndex = -1;
+      for (let i = 1; i < rows.length; i++) {
+        if (String(rows[i][0]) === String(match_id)) { rowIndex = i + 1; break; }
       }
-      const result = await writeScore(accessToken, match_id, score1, score2);
-      return res.status(200).json({ success: true, ...result });
+      if (rowIndex === -1) return res.status(404).json({ success: false, error: `Match ${match_id} not found` });
+
+      await writeCell(accessToken, `Scores!B${rowIndex}:C${rowIndex}`, [[score1 || "", score2 || ""]]);
+      return res.status(200).json({ success: true, match_id, score1, score2 });
+    }
+
+    if (req.method === "PATCH") {
+      const { match_id, team1, team2, type } = req.body;
+      if (!match_id) return res.status(400).json({ success: false, error: "match_id required" });
+
+      if (type === "elimination") {
+        const rows = await readSheet(accessToken, "Eliminations!A1:C20");
+        let rowIndex = -1;
+        for (let i = 1; i < rows.length; i++) {
+          if (String(rows[i][0]) === String(match_id)) { rowIndex = i + 1; break; }
+        }
+        if (rowIndex === -1) return res.status(404).json({ success: false, error: `Elim match ${match_id} not found` });
+        await writeCell(accessToken, `Eliminations!B${rowIndex}:C${rowIndex}`, [[team1 || "", team2 || ""]]);
+        return res.status(200).json({ success: true, match_id, team1, team2 });
+      }
+
+      return res.status(400).json({ success: false, error: "Unknown type" });
     }
 
     return res.status(405).json({ success: false, error: "Method not allowed" });
@@ -117,4 +115,3 @@ export default async function handler(req, res) {
     return res.status(500).json({ success: false, error: e.message });
   }
 }
-// Déploiement avec credentials mis à jour
